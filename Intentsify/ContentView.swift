@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  Intent
+//  Intentsify
 //
 //  Created by Bennett Yetra on 11/25/24.
 //

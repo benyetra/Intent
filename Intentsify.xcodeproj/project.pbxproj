@@ -24,38 +24,38 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0ADA69142CF578600042A136 /* Intent.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Intent.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		0ADA692B2CF5788A0042A136 /* IntentTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IntentTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		0ADA69352CF5788A0042A136 /* IntentUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IntentUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0ADA69142CF578600042A136 /* Intentsify.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Intentsify.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0ADA692B2CF5788A0042A136 /* IntentsifyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IntentsifyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0ADA69352CF5788A0042A136 /* IntentsifyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IntentsifyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		0ADA693D2CF5788A0042A136 /* Exceptions for "Intent" folder in "Intent" target */ = {
+		0ADA693D2CF5788A0042A136 /* Exceptions for "Intentsify" folder in "Intentsify" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 0ADA69132CF578600042A136 /* Intent */;
+			target = 0ADA69132CF578600042A136 /* Intentsify */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		0ADA69162CF578600042A136 /* Intent */ = {
+		0ADA69162CF578600042A136 /* Intentsify */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				0ADA693D2CF5788A0042A136 /* Exceptions for "Intent" folder in "Intent" target */,
+				0ADA693D2CF5788A0042A136 /* Exceptions for "Intentsify" folder in "Intentsify" target */,
 			);
-			path = Intent;
+			path = Intentsify;
 			sourceTree = "<group>";
 		};
-		0ADA692E2CF5788A0042A136 /* IntentTests */ = {
+		0ADA692E2CF5788A0042A136 /* IntentsifyTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = IntentTests;
+			path = IntentsifyTests;
 			sourceTree = "<group>";
 		};
-		0ADA69382CF5788A0042A136 /* IntentUITests */ = {
+		0ADA69382CF5788A0042A136 /* IntentsifyUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = IntentUITests;
+			path = IntentsifyUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -88,9 +88,9 @@
 		0ADA690B2CF578600042A136 = {
 			isa = PBXGroup;
 			children = (
-				0ADA69162CF578600042A136 /* Intent */,
-				0ADA692E2CF5788A0042A136 /* IntentTests */,
-				0ADA69382CF5788A0042A136 /* IntentUITests */,
+				0ADA69162CF578600042A136 /* Intentsify */,
+				0ADA692E2CF5788A0042A136 /* IntentsifyTests */,
+				0ADA69382CF5788A0042A136 /* IntentsifyUITests */,
 				0ADA69152CF578600042A136 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -98,9 +98,9 @@
 		0ADA69152CF578600042A136 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0ADA69142CF578600042A136 /* Intent.app */,
-				0ADA692B2CF5788A0042A136 /* IntentTests.xctest */,
-				0ADA69352CF5788A0042A136 /* IntentUITests.xctest */,
+				0ADA69142CF578600042A136 /* Intentsify.app */,
+				0ADA692B2CF5788A0042A136 /* IntentsifyTests.xctest */,
+				0ADA69352CF5788A0042A136 /* IntentsifyUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -108,9 +108,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0ADA69132CF578600042A136 /* Intent */ = {
+		0ADA69132CF578600042A136 /* Intentsify */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0ADA693E2CF5788A0042A136 /* Build configuration list for PBXNativeTarget "Intent" */;
+			buildConfigurationList = 0ADA693E2CF5788A0042A136 /* Build configuration list for PBXNativeTarget "Intentsify" */;
 			buildPhases = (
 				0ADA69102CF578600042A136 /* Sources */,
 				0ADA69112CF578600042A136 /* Frameworks */,
@@ -121,18 +121,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				0ADA69162CF578600042A136 /* Intent */,
+				0ADA69162CF578600042A136 /* Intentsify */,
 			);
-			name = Intent;
+			name = Intentsify;
 			packageProductDependencies = (
 			);
 			productName = Intent;
-			productReference = 0ADA69142CF578600042A136 /* Intent.app */;
+			productReference = 0ADA69142CF578600042A136 /* Intentsify.app */;
 			productType = "com.apple.product-type.application";
 		};
-		0ADA692A2CF5788A0042A136 /* IntentTests */ = {
+		0ADA692A2CF5788A0042A136 /* IntentsifyTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0ADA69432CF5788A0042A136 /* Build configuration list for PBXNativeTarget "IntentTests" */;
+			buildConfigurationList = 0ADA69432CF5788A0042A136 /* Build configuration list for PBXNativeTarget "IntentsifyTests" */;
 			buildPhases = (
 				0ADA69272CF5788A0042A136 /* Sources */,
 				0ADA69282CF5788A0042A136 /* Frameworks */,
@@ -144,18 +144,18 @@
 				0ADA692D2CF5788A0042A136 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				0ADA692E2CF5788A0042A136 /* IntentTests */,
+				0ADA692E2CF5788A0042A136 /* IntentsifyTests */,
 			);
-			name = IntentTests;
+			name = IntentsifyTests;
 			packageProductDependencies = (
 			);
 			productName = IntentTests;
-			productReference = 0ADA692B2CF5788A0042A136 /* IntentTests.xctest */;
+			productReference = 0ADA692B2CF5788A0042A136 /* IntentsifyTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		0ADA69342CF5788A0042A136 /* IntentUITests */ = {
+		0ADA69342CF5788A0042A136 /* IntentsifyUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0ADA69462CF5788A0042A136 /* Build configuration list for PBXNativeTarget "IntentUITests" */;
+			buildConfigurationList = 0ADA69462CF5788A0042A136 /* Build configuration list for PBXNativeTarget "IntentsifyUITests" */;
 			buildPhases = (
 				0ADA69312CF5788A0042A136 /* Sources */,
 				0ADA69322CF5788A0042A136 /* Frameworks */,
@@ -167,13 +167,13 @@
 				0ADA69372CF5788A0042A136 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				0ADA69382CF5788A0042A136 /* IntentUITests */,
+				0ADA69382CF5788A0042A136 /* IntentsifyUITests */,
 			);
-			name = IntentUITests;
+			name = IntentsifyUITests;
 			packageProductDependencies = (
 			);
 			productName = IntentUITests;
-			productReference = 0ADA69352CF5788A0042A136 /* IntentUITests.xctest */;
+			productReference = 0ADA69352CF5788A0042A136 /* IntentsifyUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -199,7 +199,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 0ADA690F2CF578600042A136 /* Build configuration list for PBXProject "Intent" */;
+			buildConfigurationList = 0ADA690F2CF578600042A136 /* Build configuration list for PBXProject "Intentsify" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -213,9 +213,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0ADA69132CF578600042A136 /* Intent */,
-				0ADA692A2CF5788A0042A136 /* IntentTests */,
-				0ADA69342CF5788A0042A136 /* IntentUITests */,
+				0ADA69132CF578600042A136 /* Intentsify */,
+				0ADA692A2CF5788A0042A136 /* IntentsifyTests */,
+				0ADA69342CF5788A0042A136 /* IntentsifyUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -271,12 +271,12 @@
 /* Begin PBXTargetDependency section */
 		0ADA692D2CF5788A0042A136 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0ADA69132CF578600042A136 /* Intent */;
+			target = 0ADA69132CF578600042A136 /* Intentsify */;
 			targetProxy = 0ADA692C2CF5788A0042A136 /* PBXContainerItemProxy */;
 		};
 		0ADA69372CF5788A0042A136 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0ADA69132CF578600042A136 /* Intent */;
+			target = 0ADA69132CF578600042A136 /* Intentsify */;
 			targetProxy = 0ADA69362CF5788A0042A136 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -311,7 +311,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = yeti.Intent;
+				PRODUCT_BUNDLE_IDENTIFIER = yeti.app.intent;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
@@ -351,7 +351,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = yeti.Intent;
+				PRODUCT_BUNDLE_IDENTIFIER = yeti.app.intent;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
@@ -494,7 +494,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Intent.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Intent";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Intentsify.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Intentsify";
 				XROS_DEPLOYMENT_TARGET = 2.1;
 			};
 			name = Debug;
@@ -517,7 +517,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Intent.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Intent";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Intentsify.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Intentsify";
 				XROS_DEPLOYMENT_TARGET = 2.1;
 			};
 			name = Release;
@@ -569,7 +569,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0ADA690F2CF578600042A136 /* Build configuration list for PBXProject "Intent" */ = {
+		0ADA690F2CF578600042A136 /* Build configuration list for PBXProject "Intentsify" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0ADA69412CF5788A0042A136 /* Debug */,
@@ -578,7 +578,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0ADA693E2CF5788A0042A136 /* Build configuration list for PBXNativeTarget "Intent" */ = {
+		0ADA693E2CF5788A0042A136 /* Build configuration list for PBXNativeTarget "Intentsify" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0ADA693F2CF5788A0042A136 /* Debug */,
@@ -587,7 +587,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0ADA69432CF5788A0042A136 /* Build configuration list for PBXNativeTarget "IntentTests" */ = {
+		0ADA69432CF5788A0042A136 /* Build configuration list for PBXNativeTarget "IntentsifyTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0ADA69442CF5788A0042A136 /* Debug */,
@@ -596,7 +596,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0ADA69462CF5788A0042A136 /* Build configuration list for PBXNativeTarget "IntentUITests" */ = {
+		0ADA69462CF5788A0042A136 /* Build configuration list for PBXNativeTarget "IntentsifyUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0ADA69472CF5788A0042A136 /* Debug */,

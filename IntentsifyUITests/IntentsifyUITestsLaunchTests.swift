@@ -1,13 +1,13 @@
 //
-//  IntentUITestsLaunchTests.swift
-//  IntentUITests
+//  IntentsifyUITestsLaunchTests.swift
+//  IntentsifyUITests
 //
 //  Created by Bennett Yetra on 11/25/24.
 //
 
 import XCTest
 
-final class IntentUITestsLaunchTests: XCTestCase {
+final class IntentsifyUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

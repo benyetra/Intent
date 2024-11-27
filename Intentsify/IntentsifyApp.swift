@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct IntentApp: App {
+struct IntentsifyApp: App {
     let persistenceController = PersistenceController.shared
 
     var body: some Scene {

@@ -1,6 +1,6 @@
 //
 //  AccountsView.swift
-//  Intent
+//  Intentsify
 //
 //  Created by Bennett Yetra on 11/26/24.
 //

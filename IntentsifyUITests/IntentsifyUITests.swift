@@ -1,13 +1,13 @@
 //
-//  IntentUITests.swift
-//  IntentUITests
+//  IntentsifyUITests.swift
+//  IntentsifyUITests
 //
 //  Created by Bennett Yetra on 11/25/24.
 //
 
 import XCTest
 
-final class IntentUITests: XCTestCase {
+final class IntentsifyUITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

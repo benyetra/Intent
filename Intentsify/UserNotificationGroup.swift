@@ -1,6 +1,6 @@
 //
 //  UserNotificationGroup.swift
-//  Intent
+//  Intentsify
 //
 //  Created by Bennett Yetra on 11/25/24.
 //
@@ -13,7 +13,7 @@ func scheduleDailyNotification(time: DateComponents) {
         if granted {
             let content = UNMutableNotificationContent()
             content.title = "Daily Reminder"
-            content.body = "Don't forget to log your Intent!"
+            content.body = "Don't forget to log your Intentsify!"
             content.sound = .default
             
             var triggerDate = time
