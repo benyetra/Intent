@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct ContentView: View {
+    @AppStorage("appleUserIdentifier") private var appleUserIdentifier: String?
+    
     var body: some View {
         TabView {
-            JournalEntryView()
+            JournalEntryView(appleUserIdentifier: appleUserIdentifier)
                 .tabItem {
                     Label("Journal", systemImage: "book")
                 }
