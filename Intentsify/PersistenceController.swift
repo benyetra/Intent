@@ -1,41 +1,68 @@
 import CoreData
 
-struct PersistenceController {
+final class PersistenceController {
     static let shared = PersistenceController()
-
-    @MainActor
-    static let preview: PersistenceController = {
-        let result = PersistenceController(inMemory: true)
-        let viewContext = result.container.viewContext
-        for i in 0..<10 {
-            let newItem = JournalEntry(context: viewContext)
-            newItem.id = UUID()
-            newItem.date = Date()
-            newItem.content = "Sample Journal Entry \(i)"
-            newItem.tags = "Sample Tag \(i)"
-            newItem.relationship = "Sample Relationship \(i)"
-        }
-        do {
-            try viewContext.save()
-        } catch {
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
-        return result
-    }()
 
     let container: NSPersistentCloudKitContainer
 
-    init(inMemory: Bool = false) {
+    private init() {
         container = NSPersistentCloudKitContainer(name: "Intentsify")
-        if inMemory {
-            container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
-        }
-        container.loadPersistentStores { storeDescription, error in
+
+        let description = container.persistentStoreDescriptions.first
+        description?.cloudKitContainerOptions = NSPersistentCloudKitContainerOptions(containerIdentifier: "iCloud.com.yourcompany.Intentsify")
+
+        container.loadPersistentStores { _, error in
             if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+                print("Error loading persistent stores: \(error), \(error.userInfo)")
+            } else {
+                print("Persistent store loaded successfully.")
             }
         }
+
         container.viewContext.automaticallyMergesChangesFromParent = true
+        container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(processRemoteStoreChange(_:)),
+            name: .NSPersistentStoreRemoteChange,
+            object: nil
+        )
+    }
+
+    @objc private func processRemoteStoreChange(_ notification: Notification) {
+        print("Processing remote store changes from CloudKit.")
+        container.viewContext.perform {
+            do {
+                try self.container.viewContext.save()
+            } catch {
+                print("Failed to save context after CloudKit sync: \(error)")
+            }
+        }
+    }
+
+    func retryCloudKitSync() {
+        container.viewContext.perform {
+            do {
+                try self.container.viewContext.save()
+                print("CloudKit sync retried successfully.")
+            } catch {
+                print("CloudKit sync retry failed: \(error.localizedDescription)")
+            }
+        }
     }
 }
+
+//
+//    // MARK: - Process CloudKit Remote Changes
+//    @objc private func processRemoteStoreChange(_ notification: Notification) {
+//        print("Processing remote store changes from CloudKit.")
+//        container.viewContext.perform {
+//            do {
+//                try self.container.viewContext.save()
+//            } catch {
+//                print("Failed to save context after CloudKit sync: \(error)")
+//            }
+//        }
+//    }
+//}

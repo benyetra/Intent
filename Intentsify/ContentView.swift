@@ -9,33 +9,33 @@ import SwiftUI
 
 struct ContentView: View {
     @AppStorage("appleUserIdentifier") private var appleUserIdentifier: String?
-    
+
     var body: some View {
-        TabView {
-            JournalEntryView(appleUserIdentifier: appleUserIdentifier)
-                .tabItem {
-                    Label("Journal", systemImage: "book")
-                }
+        if appleUserIdentifier == nil {
+            SignInView()
+        } else {
+            TabView {
+                JournalEntryView(appleUserIdentifier: appleUserIdentifier)
+                    .tabItem {
+                        Label("Journal", systemImage: "book")
+                    }
 
-            EventLogView()
-                .tabItem {
-                    Label("Events", systemImage: "list.bullet")
-                }
+                EventLogView()
+                    .tabItem {
+                        Label("Events", systemImage: "list.bullet")
+                    }
 
-            TrendsDashboardView()
-                .tabItem {
-                    Label("Trends", systemImage: "chart.bar")
-                }
+                TrendsDashboardView()
+                    .tabItem {
+                        Label("Trends", systemImage: "chart.bar")
+                    }
 
-            AccountView()
-                .tabItem {
-                    Label("Account", systemImage: "person.crop.circle")
-                }
+                AccountView()
+                    .tabItem {
+                        Label("Account", systemImage: "person.crop.circle")
+                    }
+            }
+            .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
         }
     }
-}
-
-#Preview {
-    ContentView()
-        .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
 }

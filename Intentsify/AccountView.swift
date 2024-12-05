@@ -11,16 +11,25 @@ import AuthenticationServices
 
 struct AccountView: View {
     @Environment(\.managedObjectContext) private var viewContext
-
     @AppStorage("appleUserIdentifier") private var appleUserIdentifier: String?
     @FetchRequest(entity: UserInfo.entity(), sortDescriptors: []) private var userInfo: FetchedResults<UserInfo>
+
+    @State private var showEditAccountDetails: Bool = false
 
     var body: some View {
         Form {
             if let user = userInfo.first {
                 Section(header: Text("Account Details")) {
-                    Text("Signed in as \(user.fullName ?? "Unknown User")")
-                    Text(user.email ?? "No email available")
+                    Text("Signed in as \(user.fullName ?? "Name unavailable")")
+                    Text(user.email ?? "Email unavailable")
+
+                    if user.fullName == nil || user.email == nil {
+                        Button(action: { showEditAccountDetails = true }) {
+                            Text("Update Account Details")
+                                .foregroundColor(.blue)
+                        }
+                    }
+
                     Button(action: signOut) {
                         Text("Sign Out")
                             .foregroundColor(.red)
@@ -34,6 +43,11 @@ struct AccountView: View {
                 }
             }
         }
+        .sheet(isPresented: $showEditAccountDetails) {
+            if let user = userInfo.first {
+                UpdateUserInfoView(user: user)
+            }
+        }
     }
 
     private func configureSignInRequest(_ request: ASAuthorizationAppleIDRequest) {
@@ -45,27 +59,34 @@ struct AccountView: View {
         case .success(let auth):
             if let credential = auth.credential as? ASAuthorizationAppleIDCredential {
                 appleUserIdentifier = credential.user
-                saveUserInfo(credential: credential)
+
+                do {
+                    try viewContext.saveUserInfo(credential: credential)
+                } catch {
+                    print("Error saving user info locally: \(error.localizedDescription)")
+                }
+
+                // Automatically show edit view if details are incomplete
+                if let user = userInfo.first, (user.fullName == nil || user.email == nil) {
+                    showEditAccountDetails = true
+                }
             }
         case .failure(let error):
             print("Sign in failed: \(error.localizedDescription)")
         }
     }
 
-    private func saveUserInfo(credential: ASAuthorizationAppleIDCredential) {
-        let user = UserInfo(context: viewContext)
-        user.id = UUID()
-        user.fullName = [credential.fullName?.givenName, credential.fullName?.familyName].compactMap { $0 }.joined(separator: " ")
-        user.email = credential.email
-        user.appleUserIdentifier = credential.user
-        try? viewContext.save()
-    }
 
     private func signOut() {
-        // Clear user information
         appleUserIdentifier = nil
         userInfo.forEach(viewContext.delete)
-        try? viewContext.save()
+
+        do {
+            try viewContext.save()
+            print("Successfully signed out.")
+        } catch {
+            print("Failed to save context during sign-out: \(error.localizedDescription)")
+        }
     }
 }
 
@@ -76,9 +97,9 @@ struct ReminderSettingsView: View {
         entity: ReminderSettings.entity(),
         sortDescriptors: []
     ) private var reminderSettings: FetchedResults<ReminderSettings>
-
+    
     @State private var notificationTime = Date()
-
+    
     var body: some View {
         Form {
             Section(header: Text("Notification Settings")) {
