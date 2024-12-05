@@ -2,12 +2,13 @@ import SwiftUI
 import CoreData
 
 struct JournalEntryView: View {
+    let appleUserIdentifier: String? // Passed as a parameter
     @Environment(\.managedObjectContext) private var viewContext
 
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \JournalEntry.date, ascending: false)],
-        animation: .default
-    ) private var journalEntries: FetchedResults<JournalEntry>
+    @State private var fetchRequest: FetchRequest<JournalEntry>
+    private var journalEntries: FetchedResults<JournalEntry> {
+        fetchRequest.wrappedValue
+    }
 
     @State private var journalText: String = ""
     @State private var goals: String = ""
@@ -15,6 +16,16 @@ struct JournalEntryView: View {
     @State private var selectedDate: Date = Date()
     @State private var showAlert: Bool = false
     @State private var goalSuggestions: [String] = [] // Suggestions and existing goals
+
+    init(appleUserIdentifier: String?) {
+        self.appleUserIdentifier = appleUserIdentifier
+        _fetchRequest = State(
+            initialValue: FetchRequest<JournalEntry>(
+                sortDescriptors: [NSSortDescriptor(keyPath: \JournalEntry.date, ascending: true)],
+                predicate: NSPredicate(format: "userId == %@", appleUserIdentifier ?? "")
+            )
+        )
+    }
 
     var body: some View {
         NavigationView {
