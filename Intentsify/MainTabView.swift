@@ -14,20 +14,20 @@ struct MainTabView: View {
                 .tabItem {
                     Label("Journal", systemImage: "book")
                 }
-            
+
             CalendarView()
                 .tabItem {
                     Label("Calendar", systemImage: "calendar")
                 }
-            
-            TrendsView()
+
+            TrendsDashboardView()
                 .tabItem {
-                    Label("Trends", systemImage: "chart.bar")
+                    Label("Trends", systemImage: "chart.bar.xaxis")
                 }
-            
+
             AccountView()
                 .tabItem {
-                    Label("Account", systemImage: "person")
+                    Label("Account", systemImage: "person.crop.circle")
                 }
         }
     }

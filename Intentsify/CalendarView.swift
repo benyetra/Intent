@@ -8,11 +8,6 @@
 import SwiftUI
 import CloudKit
 
-struct AlertMessage: Identifiable {
-    let id = UUID()
-    let message: String
-}
-
 struct CalendarView: View {
     @AppStorage("userRecordID") private var userRecordID: String = ""
     @State private var selectedDate: Date = Date()
