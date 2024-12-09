@@ -46,41 +46,77 @@ struct LoginView: View {
         switch result {
         case .success(let auth):
             if let appleIDCredential = auth.credential as? ASAuthorizationAppleIDCredential {
-                if let email = appleIDCredential.email {
-                    userEmail = email
-                }
-                saveUserInCloudKit(userEmail: userEmail)
+                // Always capture the user identifier
+                let userID = appleIDCredential.user // Unique identifier for the user
+                
+                // Handle name and email only if provided
+                let fullName = [
+                    appleIDCredential.fullName?.givenName,
+                    appleIDCredential.fullName?.familyName
+                ]
+                .compactMap { $0 } // Remove nil values
+                .joined(separator: " ") // Combine given and family names
+                
+                let email = appleIDCredential.email // Email provided only during first login
+                
+                // Log the captured details for debugging
+                print("Apple ID User ID: \(userID)")
+                print("Full Name: \(fullName.isEmpty ? "N/A" : fullName)")
+                print("Email: \(email ?? "N/A")")
+                
+                // Save the user details to CloudKit
+                saveUserInCloudKit(userEmail: email, fullName: fullName, userID: userID)
                 isLoggedIn = true
             }
         case .failure(let error):
             print("Sign-in failed: \(error.localizedDescription)")
         }
     }
-    
-    private func saveUserInCloudKit(userEmail: String) {
-        let container = CKContainer.default()
+
+    private func saveUserInCloudKit(userEmail: String?, fullName: String?, userID: String) {
+        let container = CKContainer(identifier: "iCloud.intentsify")
         let database = container.publicCloudDatabase
-        let userRecord = CKRecord(recordType: "User")
-        userRecord["email"] = userEmail
         
-        database.save(userRecord) { _, error in
+        let query = CKQuery(recordType: "User", predicate: NSPredicate(format: "userID == %@", userID))
+        database.perform(query, inZoneWith: nil) { results, error in
             if let error = error {
-                print("Error saving user to CloudKit: \(error.localizedDescription)")
+                print("Error fetching user record: \(error.localizedDescription)")
+            } else if let existingRecord = results?.first {
+                print("User already exists in CloudKit: \(existingRecord)")
             } else {
-                print("User saved to CloudKit")
+                // Create a new user record
+                let userRecord = CKRecord(recordType: "User")
+                userRecord["userID"] = userID
+                userRecord["email"] = userEmail ?? "hidden"
+                userRecord["fullName"] = fullName ?? "N/A"
+                
+                database.save(userRecord) { _, saveError in
+                    if let saveError = saveError {
+                        print("Error saving user to CloudKit: \(saveError.localizedDescription)")
+                    } else {
+                        print("User saved to CloudKit with userID: \(userID), email: \(userEmail ?? "hidden"), and name: \(fullName ?? "N/A")")
+                    }
+                }
             }
         }
     }
+
     
     private func checkiCloudAvailability() {
-        CKContainer.default().accountStatus { status, error in
+        let container = CKContainer(identifier: "iCloud.intentsify") // Explicitly set the container ID
+        container.accountStatus { status, error in
             if let error = error {
                 print("iCloud account error: \(error.localizedDescription)")
             } else {
-                if status == .noAccount {
+                switch status {
+                case .noAccount:
                     print("No iCloud account is logged in.")
-                } else {
+                case .restricted:
+                    print("iCloud is restricted.")
+                case .available:
                     print("iCloud is ready.")
+                default:
+                    print("Unknown iCloud status.")
                 }
             }
         }

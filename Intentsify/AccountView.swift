@@ -7,12 +7,53 @@
 
 import SwiftUI
 
-struct AccountsView: View {
+import SwiftUI
+
+struct AccountView: View {
+    @AppStorage("isLoggedIn") private var isLoggedIn = false
+    @AppStorage("userEmail") private var userEmail: String = ""
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationView {
+            VStack(spacing: 20) {
+                Text("Account")
+                    .font(.largeTitle)
+                
+                if !userEmail.isEmpty {
+                    Text("Signed in as:")
+                        .font(.headline)
+                    Text(userEmail)
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                }
+                
+                Button(action: logout) {
+                    Text("Log Out")
+                        .foregroundColor(.red)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color(.systemGray5))
+                        .cornerRadius(8)
+                }
+            }
+            .padding()
+            .navigationTitle("Account")
+        }
+    }
+    
+    private func logout() {
+        isLoggedIn = false
+        userEmail = ""
     }
 }
 
+struct AccountView_Previews: PreviewProvider {
+    static var previews: some View {
+        AccountView()
+    }
+}
+
+
 #Preview {
-    AccountsView()
+    AccountView()
 }

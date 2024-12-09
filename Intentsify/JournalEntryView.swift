@@ -9,9 +9,21 @@ import SwiftUI
 
 struct JournalEntryView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationView {
+            Text("Journal Entry View")
+                .font(.title)
+                .padding()
+                .navigationTitle("Journal")
+        }
     }
 }
+
+struct JournalEntryView_Previews: PreviewProvider {
+    static var previews: some View {
+        JournalEntryView()
+    }
+}
+
 
 #Preview {
     JournalEntryView()
