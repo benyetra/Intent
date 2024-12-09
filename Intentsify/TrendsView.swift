@@ -14,36 +14,47 @@ struct TrendsDashboardView: View {
     @State private var relationshipTrends: [String: Int] = [:]
     @State private var goalTrends: [String: Int] = [:]
     @State private var isLoading: Bool = true
-    @State private var alertMessage: AlertMessage? // Change from String to AlertMessage
+    @State private var alertMessage: AlertMessage?
 
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 20) {
-                    // Goal Streaks Section
-                    if !goalStreaks.isEmpty {
-                        StreaksSection(goalStreaks: goalStreaks)
-                    }
-
-                    // Relationship Trends Section
-                    if !relationshipTrends.isEmpty {
-                        TrendsChartSection(
-                            title: "Relationship Trends",
-                            data: relationshipTrends
-                        )
-                    }
-
-                    // Goal Trends Section
-                    if !goalTrends.isEmpty {
-                        TrendsChartSection(
-                            title: "Goal Trends",
-                            data: goalTrends
-                        )
-                    }
-
                     if isLoading {
                         ProgressView("Loading trends...")
                             .padding()
+                    } else {
+                        // Longest streak calculation
+                        let longestStreak = goalStreaks.values.max() ?? 1
+
+                        // Streak Progress Section
+                        if !goalStreaks.isEmpty {
+                            StreakProgressView(streaks: goalStreaks, longestStreak: longestStreak)
+                        }
+
+                        // Relationship Trends Section
+                        if !relationshipTrends.isEmpty {
+                            TrendsChartSection(
+                                title: "Relationship Trends",
+                                data: relationshipTrends,
+                                onClick: { relationship in
+                                    // Optional: Add logic to navigate to detailed trends view for a relationship
+                                    print("Tapped on relationship: \(relationship)")
+                                }
+                            )
+                        }
+
+                        // Goal Trends Section
+                        if !goalTrends.isEmpty {
+                            TrendsChartSection(
+                                title: "Goal Trends",
+                                data: goalTrends,
+                                onClick: { goal in
+                                    // Optional: Add logic to navigate to detailed trends view for a goal
+                                    print("Tapped on goal: \(goal)")
+                                }
+                            )
+                        }
                     }
                 }
                 .padding()
@@ -159,3 +170,34 @@ struct StreaksSection: View {
         }
     }
 }
+
+struct StreakProgressView: View {
+    var streaks: [String: Int]
+    var longestStreak: Int
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            Text("Your Goal Streaks")
+                .font(.headline)
+
+            ForEach(streaks.sorted(by: { $0.value > $1.value }), id: \.key) { goal, streak in
+                HStack {
+                    Text(goal)
+                        .font(.subheadline)
+                        .fontWeight(.bold)
+                    Spacer()
+                    Text("\(streak) days")
+                        .foregroundColor(.secondary)
+                }
+
+                // Progress bar visualization
+                ProgressView(value: Double(streak), total: Double(longestStreak))
+                    .progressViewStyle(LinearProgressViewStyle(tint: .accentColor))
+            }
+        }
+        .padding()
+    }
+}
+
+
+
