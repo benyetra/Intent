@@ -4,6 +4,7 @@
 //
 //  Created by Bennett Yetra on 12/9/24.
 //
+
 import SwiftUI
 import UserNotifications
 import CloudKit
@@ -12,79 +13,91 @@ struct AccountView: View {
     @AppStorage("isLoggedIn") private var isLoggedIn: Bool = false
     @AppStorage("userFullName") private var userFullName: String = "Loading..."
     @AppStorage("userEmail") private var userEmail: String = "Loading..."
-    @AppStorage("userRecordID") private var userRecordID: String = "" // Add userRecordID here
+    @AppStorage("userRecordID") private var userRecordID: String = ""
 
     @State private var reminderTime: Date = Calendar.current.date(bySettingHour: 20, minute: 30, second: 0, of: Date()) ?? Date()
-    
     @State private var showNotificationPermissionAlert = false
-    @State private var isLoadingData = true
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 30) {
-                // User Info Section
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Full Name: \(userFullName)")
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                    
-                    Text("Email: \(userEmail)")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
-                .background(Color(.systemGray6))
-                .cornerRadius(12)
+            ZStack {
+                Color("LightBackgroundColor").ignoresSafeArea() // App background color
                 
-                // Journal Reminder Section
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Daily Journal Reminder")
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                    
-                    DatePicker("", selection: $reminderTime, displayedComponents: .hourAndMinute)
-                        .labelsHidden()
-                        .onChange(of: reminderTime) { newTime in
-                            saveReminderTimeToCloudKit(newTime: newTime)
-                            scheduleNotification(for: newTime)
-                        }
+                VStack(spacing: 30) {
+                    // User Info Section
+                    infoSection
+
+                    // Daily Journal Reminder
+                    reminderSection
+
+                    Spacer()
+
+                    // Log Out Button
+                    logoutButton
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
-                .background(Color(.systemGray6))
-                .cornerRadius(12)
-
-                Spacer()
-
-                // Log Out Button
-                Button(action: logOut) {
-                    Text("Log Out")
-                        .fontWeight(.semibold)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 50)
-                        .foregroundColor(.white)
-                        .background(Color.red)
-                        .cornerRadius(12)
+                .navigationTitle("Account")
+                .onAppear {
+                    checkNotificationPermission()
+                    fetchReminderTimeFromCloudKit()
                 }
-            }
-            .padding()
-            .navigationTitle("Account")
-            .onAppear {
-                checkNotificationPermission()
-                loadUserData()
-                fetchReminderTimeFromCloudKit()
-            }
-            .alert("Notification Permission Required", isPresented: $showNotificationPermissionAlert) {
-                Button("Go to Settings") {
-                    if let appSettings = URL(string: UIApplication.openSettingsURLString) {
-                        UIApplication.shared.open(appSettings)
+                .alert("Notification Permission Required", isPresented: $showNotificationPermissionAlert) {
+                    Button("Go to Settings") {
+                        if let appSettings = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(appSettings)
+                        }
                     }
+                    Button("Cancel", role: .cancel) {}
+                } message: {
+                    Text("Please enable notifications in Settings to receive daily journal reminders.")
                 }
-                Button("Cancel", role: .cancel) { }
-            } message: {
-                Text("Please enable notifications in Settings to receive daily journal reminders.")
             }
+        }
+    }
+
+    private var infoSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Full Name: \(userFullName)")
+                .font(.headline)
+                .foregroundColor(.primary)
+            Text("Email: \(userEmail)")
+                .font(.subheadline)
+                .foregroundColor(Color("SecondaryTextColor"))
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding()
+        .background(Color("SecondaryBackgroundColor"))
+        .cornerRadius(12)
+        .shadow(color: Color("AccentColor").opacity(0.2), radius: 5, x: 0, y: 2)
+    }
+
+    private var reminderSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Daily Journal Reminder")
+                .font(.headline)
+                .foregroundColor(.primary)
+            DatePicker("", selection: $reminderTime, displayedComponents: .hourAndMinute)
+                .labelsHidden()
+                .onChange(of: reminderTime) { newTime in
+                    scheduleNotification(for: newTime)
+                }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding()
+        .background(Color("SecondaryBackgroundColor"))
+        .cornerRadius(12)
+        .shadow(color: Color("AccentColor").opacity(0.2), radius: 5, x: 0, y: 2)
+    }
+
+    private var logoutButton: some View {
+        Button(action: { isLoggedIn = false }) {
+            Text("Log Out")
+                .fontWeight(.semibold)
+                .frame(maxWidth: .infinity)
+                .frame(height: 50)
+                .foregroundColor(.white)
+                .background(Color.red)
+                .cornerRadius(12)
         }
     }
     

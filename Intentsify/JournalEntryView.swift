@@ -19,114 +19,173 @@ struct JournalEntryView: View {
 
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(spacing: 20) {
-                    // Journal Text Field
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Journal Entry")
-                            .font(.headline)
-                        
-                        TextEditor(text: $journalText)
-                            .frame(minHeight: 150, maxHeight: .infinity) // Set flexible height
-                            .padding(8)
-                            .background(Color(.secondarySystemBackground))
-                            .cornerRadius(8)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color(.separator), lineWidth: 1)
-                            )
-                            .scrollContentBackground(.hidden)
-                    }
-                    
-                    // Date and Time Picker
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Date and Time")
-                            .font(.headline)
-                        
-                        DatePicker("Select Date and Time", selection: $entryDate, displayedComponents: [.date, .hourAndMinute])
-                            .labelsHidden()
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(8)
-                            .background(Color(.secondarySystemBackground))
-                            .cornerRadius(8)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color(.separator), lineWidth: 1)
-                            )
-                    }
-                    
-                    // Goal Tag Field
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Tag a Goal")
-                            .font(.headline)
-                        
-                        TextField("Add a goal tag (e.g., 'Fitness', 'Career')", text: $goalTag)
-                            .padding(8)
-                            .background(Color(.secondarySystemBackground))
-                            .cornerRadius(8)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color(.separator), lineWidth: 1)
-                            )
-                    }
-                    
-                    // Related People or Location
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Related People or Location")
-                            .font(.headline)
-                        
-                        TextField("Add names of people or location", text: $relatedPeopleOrLocation)
-                            .padding(8)
-                            .background(Color(.secondarySystemBackground))
-                            .cornerRadius(8)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color(.separator), lineWidth: 1)
-                            )
-                    }
-                    
-                    // Save Button
-                    Button(action: saveJournalEntry) {
-                        HStack {
-                            if isSaving {
-                                ProgressView()
-                                    .progressViewStyle(CircularProgressViewStyle())
-                            } else {
-                                Text("Save Entry")
-                                    .fontWeight(.bold)
-                            }
+            ZStack {
+                // Light background inspired by app icon
+                Color("LightBackgroundColor")
+                    .ignoresSafeArea()
+
+                ScrollView {
+                    VStack(spacing: 30) {
+                        // Journal Text Section
+                        journalSection
+
+                        // Date Picker Section
+                        datePickerSection
+
+                        // Goal Tag Section
+                        goalTagSection
+
+                        // Related People Section
+                        relatedPeopleSection
+
+                        // Save Button Section
+                        saveButton
+
+                        // Error Message Section
+                        if let saveError = saveError {
+                            Text(saveError)
+                                .foregroundColor(.red)
+                                .font(.caption)
+                                .padding(.top)
                         }
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.accentColor)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
                     }
-                    .disabled(isSaving)
-                    
-                    // Error Message
-                    if let saveError = saveError {
-                        Text(saveError)
-                            .foregroundColor(.red)
-                            .font(.caption)
-                            .padding(.top)
-                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 30)
                 }
-                .padding()
             }
-            .navigationTitle("New Journal Entry")
+            .navigationTitle("Intentsify")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
-    
+
+    private var journalSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Journal Entry")
+                .font(.title2)
+                .fontWeight(.bold)
+                .foregroundColor(.black)
+
+            TextEditor(text: $journalText)
+                .frame(minHeight: 150)
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color.white)
+                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(journalText.isEmpty ? Color.red : Color("AccentColor"), lineWidth: 2)
+                )
+        }
+    }
+
+    private var datePickerSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Date and Time")
+                .font(.title2)
+                .fontWeight(.bold)
+                .foregroundColor(.black)
+
+            DatePicker("Select Date and Time", selection: $entryDate, displayedComponents: [.date, .hourAndMinute])
+                .labelsHidden()
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color.white)
+                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color("AccentColor"), lineWidth: 2)
+                )
+        }
+    }
+
+    private var goalTagSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Tag a Goal")
+                .font(.title2)
+                .fontWeight(.bold)
+                .foregroundColor(.black)
+
+            TextField("Add a goal tag (e.g., 'Fitness', 'Career')", text: $goalTag)
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color.white)
+                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(goalTag.isEmpty ? Color.red : Color("AccentColor"), lineWidth: 2)
+                )
+        }
+    }
+
+    private var relatedPeopleSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Related People or Location")
+                .font(.title2)
+                .fontWeight(.bold)
+                .foregroundColor(.black)
+
+            TextField("Add names of people or location", text: $relatedPeopleOrLocation)
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color.white)
+                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(relatedPeopleOrLocation.isEmpty ? Color.red : Color("AccentColor"), lineWidth: 2)
+                )
+        }
+    }
+
+    private var saveButton: some View {
+        Button(action: saveJournalEntry) {
+            HStack {
+                if isSaving {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .tint(.white)
+                } else {
+                    Text("Submit Entry")
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(Color("AccentColor"))
+            .cornerRadius(10)
+        }
+        .disabled(isSaving)
+        .opacity(isSaving ? 0.6 : 1)
+    }
+
     // Save Journal Entry to CloudKit
     private func saveJournalEntry() {
         guard !userRecordID.isEmpty else {
             saveError = "User is not logged in."
             return
         }
-        
+
         guard !journalText.trimmingCharacters(in: .whitespaces).isEmpty else {
             saveError = "Please enter journal text."
+            return
+        }
+
+        guard !goalTag.trimmingCharacters(in: .whitespaces).isEmpty else {
+            saveError = "Please add a goal tag."
+            return
+        }
+
+        guard !relatedPeopleOrLocation.trimmingCharacters(in: .whitespaces).isEmpty else {
+            saveError = "Please add related people or location."
             return
         }
 
@@ -136,16 +195,14 @@ struct JournalEntryView: View {
         let container = CKContainer(identifier: "iCloud.intentsify")
         let database = container.publicCloudDatabase
         let record = CKRecord(recordType: "JournalEntry")
-        
-        // Associate the entry with the user
+
         let userReference = CKRecord.Reference(recordID: CKRecord.ID(recordName: userRecordID), action: .none)
         record["userID"] = userReference
         record["text"] = journalText
         record["entryDate"] = entryDate as NSDate
-        record["goalTag"] = goalTag.isEmpty ? "None" : goalTag
-        record["relatedPeopleOrLocation"] = relatedPeopleOrLocation.isEmpty ? "None" : relatedPeopleOrLocation
+        record["goalTag"] = goalTag
+        record["relatedPeopleOrLocation"] = relatedPeopleOrLocation
 
-        // Save to CloudKit
         database.save(record) { _, error in
             DispatchQueue.main.async {
                 self.isSaving = false
@@ -157,8 +214,7 @@ struct JournalEntryView: View {
             }
         }
     }
-    
-    // Clear Form After Saving
+
     private func clearForm() {
         journalText = ""
         entryDate = Date()

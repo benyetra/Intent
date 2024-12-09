@@ -11,61 +11,89 @@ import CloudKit
 struct LoginView: View {
     @AppStorage("isLoggedIn") private var isLoggedIn = false
     @AppStorage("userEmail") private var userEmail: String = ""
-    
+
     var body: some View {
-        VStack {
-            Spacer()
-            Text("Welcome to Intentsify")
-                .font(.largeTitle)
-                .padding()
-            
-            SignInWithAppleButton(
-                .signIn,
-                onRequest: configureRequest,
-                onCompletion: handleCompletion
-            )
-            .signInWithAppleButtonStyle(.black)
-            .frame(height: 50)
+        ZStack {
+            Color("LightBackgroundColor").ignoresSafeArea()
+
+            VStack(spacing: 40) {
+                Spacer()
+
+                // Title and Subtitle
+                VStack(spacing: 10) {
+                    Text("Welcome to\nIntentsify 💪")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .foregroundColor(Color("AccentColor"))
+
+                    Text("Track your goals and build momentum towards positive change.")
+                        .font(.subheadline)
+                        .foregroundColor(Color("SecondaryTextColor"))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 20)
+                }
+
+                Spacer()
+
+                // Sign In Button
+                SignInWithAppleButton(
+                    .signIn,
+                    onRequest: configureSignInWithAppleRequest,
+                    onCompletion: handleSignInWithAppleCompletion
+                )
+                .signInWithAppleButtonStyle(.whiteOutline)
+                .frame(height: 50)
+                .cornerRadius(15)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 15)
+                        .stroke(Color("AccentColor"), lineWidth: 2)
+                )
+                .shadow(color: Color("AccentColor").opacity(0.3), radius: 10, x: 0, y: 5)
+                .padding(.horizontal, 40)
+
+                // Security Text
+                Text("Sign in securely with your Apple ID")
+                    .font(.footnote)
+                    .foregroundColor(Color("SecondaryTextColor"))
+
+                Spacer()
+
+                // Footer
+                Text("Powered by YetiApps")
+                    .font(.footnote)
+                    .foregroundColor(Color("SecondaryTextColor"))
+            }
             .padding()
-            
-            Spacer()
-            Text("Sign in securely with your Apple ID")
-                .font(.footnote)
-                .foregroundColor(.gray)
         }
         .onAppear {
             checkiCloudAvailability()
         }
     }
-    
-    private func configureRequest(_ request: ASAuthorizationAppleIDRequest) {
+
+    private func configureSignInWithAppleRequest(_ request: ASAuthorizationAppleIDRequest) {
         request.requestedScopes = [.fullName, .email]
     }
-    
-    private func handleCompletion(_ result: Result<ASAuthorization, Error>) {
+
+    private func handleSignInWithAppleCompletion(_ result: Result<ASAuthorization, Error>) {
         switch result {
         case .success(let auth):
             if let appleIDCredential = auth.credential as? ASAuthorizationAppleIDCredential {
-                // Always capture the user identifier
-                let userID = appleIDCredential.user // Unique identifier for the user
-                
-                // Handle name and email only if provided
+                let userID = appleIDCredential.user
                 let fullName = [
                     appleIDCredential.fullName?.givenName,
                     appleIDCredential.fullName?.familyName
                 ]
-                .compactMap { $0 } // Remove nil values
-                .joined(separator: " ") // Combine given and family names
-                
-                let email = appleIDCredential.email // Email provided only during first login
-                
-                // Log the captured details for debugging
+                .compactMap { $0 }
+                .joined(separator: " ")
+                let email = appleIDCredential.email ?? "Hidden"
+
                 print("Apple ID User ID: \(userID)")
-                print("Full Name: \(fullName.isEmpty ? "N/A" : fullName)")
-                print("Email: \(email ?? "N/A")")
-                
-                // Save the user details to CloudKit
+                print("Full Name: \(fullName)")
+                print("Email: \(email)")
+
+                // Save user details in CloudKit
                 saveUserInCloudKit(userEmail: email, fullName: fullName, userID: userID)
+
                 isLoggedIn = true
             }
         case .failure(let error):
@@ -75,7 +103,7 @@ struct LoginView: View {
 
     @AppStorage("userRecordID") private var userRecordID: String = ""
 
-    private func saveUserInCloudKit(userEmail: String?, fullName: String?, userID: String) {
+    private func saveUserInCloudKit(userEmail: String, fullName: String, userID: String) {
         let container = CKContainer(identifier: "iCloud.intentsify")
         let database = container.publicCloudDatabase
 
@@ -84,46 +112,41 @@ struct LoginView: View {
             if let error = error {
                 print("Error fetching user record: \(error.localizedDescription)")
             } else if let existingRecord = results?.first {
-                print("User already exists in CloudKit: \(existingRecord)")
                 DispatchQueue.main.async {
-                    self.userRecordID = existingRecord.recordID.recordName // Save recordID for future use
+                    self.userRecordID = existingRecord.recordID.recordName
                 }
             } else {
-                // Create a new user record
                 let userRecord = CKRecord(recordType: "User")
                 userRecord["userID"] = userID
-                userRecord["email"] = userEmail ?? "hidden"
-                userRecord["fullName"] = fullName ?? "N/A"
+                userRecord["email"] = userEmail
+                userRecord["fullName"] = fullName
 
                 database.save(userRecord) { savedRecord, saveError in
                     if let saveError = saveError {
-                        print("Error saving user to CloudKit: \(saveError.localizedDescription)")
-                    } else {
-                        print("User saved to CloudKit with userID: \(userID), email: \(userEmail ?? "hidden"), and name: \(fullName ?? "N/A")")
+                        print("Error saving user: \(saveError.localizedDescription)")
+                    } else if let savedRecord = savedRecord {
                         DispatchQueue.main.async {
-                            if let savedRecord = savedRecord {
-                                self.userRecordID = savedRecord.recordID.recordName // Save recordID for future use
-                            }
+                            self.userRecordID = savedRecord.recordID.recordName
                         }
                     }
                 }
             }
         }
     }
-    
+
     private func checkiCloudAvailability() {
-        let container = CKContainer(identifier: "iCloud.intentsify") // Explicitly set the container ID
+        let container = CKContainer(identifier: "iCloud.intentsify")
         container.accountStatus { status, error in
             if let error = error {
-                print("iCloud account error: \(error.localizedDescription)")
+                print("iCloud error: \(error.localizedDescription)")
             } else {
                 switch status {
                 case .noAccount:
-                    print("No iCloud account is logged in.")
+                    print("No iCloud account logged in.")
                 case .restricted:
                     print("iCloud is restricted.")
                 case .available:
-                    print("iCloud is ready.")
+                    print("iCloud is available.")
                 default:
                     print("Unknown iCloud status.")
                 }

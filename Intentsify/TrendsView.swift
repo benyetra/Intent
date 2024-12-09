@@ -16,50 +16,39 @@ struct TrendsDashboardView: View {
     @State private var isLoading: Bool = true
     @State private var alertMessage: AlertMessage?
 
+    private var longestStreak: Int {
+        goalStreaks.values.max() ?? 1
+    }
+    
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(spacing: 20) {
-                    if isLoading {
-                        ProgressView("Loading trends...")
-                            .padding()
-                    } else {
-                        // Longest streak calculation
-                        let longestStreak = goalStreaks.values.max() ?? 1
+            ZStack {
+                Color("LightBackgroundColor").ignoresSafeArea()
 
-                        // Streak Progress Section
-                        if !goalStreaks.isEmpty {
-                            StreakProgressView(streaks: goalStreaks, longestStreak: longestStreak)
-                        }
+                ScrollView {
+                    VStack(spacing: 20) {
+                        // Streak Progress
+                        StreakProgressView(streaks: goalStreaks, longestStreak: longestStreak)
+                            .background(Color("SecondaryBackgroundColor"))
+                            .cornerRadius(10)
+                            .shadow(color: Color("AccentColor").opacity(0.2), radius: 5, x: 0, y: 2)
 
-                        // Relationship Trends Section
-                        if !relationshipTrends.isEmpty {
-                            TrendsChartSection(
-                                title: "Relationship Trends",
-                                data: relationshipTrends,
-                                onClick: { relationship in
-                                    // Optional: Add logic to navigate to detailed trends view for a relationship
-                                    print("Tapped on relationship: \(relationship)")
-                                }
-                            )
-                        }
-
-                        // Goal Trends Section
-                        if !goalTrends.isEmpty {
-                            TrendsChartSection(
-                                title: "Goal Trends",
-                                data: goalTrends,
-                                onClick: { goal in
-                                    // Optional: Add logic to navigate to detailed trends view for a goal
-                                    print("Tapped on goal: \(goal)")
-                                }
-                            )
-                        }
+                        // Trends Charts
+                        TrendsChartSection(
+                            title: "Goal Trends",
+                            data: goalTrends,
+                            onClick: { goal in
+                                print("Tapped on goal: \(goal)")
+                            }
+                        )
+                        .background(Color("SecondaryBackgroundColor"))
+                        .cornerRadius(10)
+                        .shadow(color: Color("AccentColor").opacity(0.2), radius: 5, x: 0, y: 2)
                     }
+                    .padding()
                 }
-                .padding()
+                .navigationTitle("Trends")
             }
-            .navigationTitle("Trends")
             .onAppear {
                 fetchTrendsData()
             }

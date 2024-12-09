@@ -14,56 +14,63 @@ struct CalendarView: View {
     @State private var journalEntries: [CKRecord] = []
     @State private var datesWithEntries: [Date] = []
     @State private var isLoading = true
-    @State private var alertMessage: AlertMessage?
+    @State private var alertMessage: AlertMessage? // Add this property
 
     var body: some View {
         NavigationView {
-            VStack {
-                // Custom Calendar
-                CustomCalendarView(
-                    selectedDate: $selectedDate,
-                    datesWithEntries: datesWithEntries,
-                    onDateSelected: fetchEntriesForSelectedDate
-                )
-                .padding()
+            ZStack {
+                Color("LightBackgroundColor").ignoresSafeArea()
 
-                Divider()
+                VStack {
+                    CustomCalendarView(
+                        selectedDate: $selectedDate,
+                        datesWithEntries: datesWithEntries,
+                        onDateSelected: fetchEntriesForSelectedDate
+                    )
+                    .padding()
+                    .background(Color("SecondaryBackgroundColor"))
+                    .cornerRadius(10)
+                    .shadow(color: Color("AccentColor").opacity(0.2), radius: 5, x: 0, y: 2)
 
-                if isLoading {
-                    ProgressView("Loading...")
-                } else if journalEntries.isEmpty {
-                    Text("No journal entries for this day.")
-                        .foregroundColor(.gray)
-                        .padding()
-                } else {
-                    // List of entries
-                    List {
-                        ForEach(journalEntries, id: \.recordID) { entry in
-                            VStack(alignment: .leading) {
-                                Text(entry["text"] as? String ?? "No text")
-                                    .font(.headline)
-                                    .lineLimit(2)
-                                Text(entry["goalTag"] as? String ?? "No goal tag")
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-                                Text(entry["relatedPeopleOrLocation"] as? String ?? "No details")
-                                    .font(.footnote)
-                                    .foregroundColor(.gray)
-                            }
-                        }
-                        .onDelete(perform: deleteEntry)
+                    Divider()
+
+                    if isLoading {
+                        ProgressView("Loading...")
+                            .padding()
+                    } else {
+                        entriesList
                     }
                 }
-            }
-            .navigationTitle("Calendar")
-            .onAppear {
-                fetchDatesWithEntries()
-                fetchEntriesForSelectedDate(date: selectedDate)
-            }
-            .alert(item: $alertMessage) { alert in
-                Alert(title: Text("Error"), message: Text(alert.message), dismissButton: .default(Text("OK")))
+                .padding()
+                .navigationTitle("Calendar")
+                .alert(item: $alertMessage) { alert in
+                    Alert(
+                        title: Text("Error"),
+                        message: Text(alert.message),
+                        dismissButton: .default(Text("OK"))
+                    )
+                }
             }
         }
+    }
+
+    private var entriesList: some View {
+        List {
+            ForEach(journalEntries, id: \.recordID) { entry in
+                VStack(alignment: .leading) {
+                    Text(entry["text"] as? String ?? "No text")
+                        .font(.headline)
+                        .foregroundColor(Color("AccentColor"))
+                    Text(entry["goalTag"] as? String ?? "No goal tag")
+                        .font(.subheadline)
+                        .foregroundColor(Color("SecondaryTextColor"))
+                }
+                .padding()
+                .background(Color("SecondaryBackgroundColor"))
+                .cornerRadius(8)
+            }
+        }
+        .listStyle(PlainListStyle())
     }
 
     // Fetch Dates with Entries
