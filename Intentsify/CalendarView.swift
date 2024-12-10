@@ -57,7 +57,7 @@ struct CalendarView: View {
     private var entriesList: some View {
         List {
             ForEach(journalEntries, id: \.recordID) { entry in
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 8) {
                     Text(entry["text"] as? String ?? "No text")
                         .font(.headline)
                         .foregroundColor(Color("AccentColor"))
@@ -66,11 +66,11 @@ struct CalendarView: View {
                         .foregroundColor(Color("SecondaryTextColor"))
                 }
                 .padding()
-                .background(Color("SecondaryBackgroundColor"))
-                .cornerRadius(8)
+                .listRowBackground(Color("SecondaryBackgroundColor")) // Set background
             }
+            .onDelete(perform: deleteEntry) // Enable swipe-to-delete
         }
-        .listStyle(PlainListStyle())
+        .listStyle(PlainListStyle()) // Use plain style for a cleaner appearance
     }
 
     // Fetch Dates with Entries
