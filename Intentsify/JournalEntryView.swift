@@ -45,6 +45,8 @@ struct JournalEntryView: View {
                     }
                 }
             }
+            .navigationViewStyle(StackNavigationViewStyle())
+
 
             // Checkmark Animation Overlay
             if showCheckmark {
@@ -109,22 +111,21 @@ struct JournalEntryView: View {
                 .font(.headline)
                 .foregroundColor(Color("PrimaryTextColor"))
 
-            HStack {
-                DatePicker("", selection: $entryDate, displayedComponents: [.date, .hourAndMinute])
-                    .labelsHidden()
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color("SecondaryBackgroundColor"))
-                            .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color("AccentColor"), lineWidth: 1)
-                    )
-            }
+            DatePicker("Select Date and Time", selection: $entryDate, displayedComponents: [.date, .hourAndMinute])
+                .labelsHidden() // Hides the label for a cleaner look
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading) // Ensure left alignment
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color("SecondaryBackgroundColor"))
+                        .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color("AccentColor"), lineWidth: 1)
+                )
         }
+        .frame(maxWidth: .infinity, alignment: .leading) // Ensure the whole section is left-aligned
     }
 
 
