@@ -21,9 +21,7 @@ struct JournalEntryView: View {
         NavigationView {
             ZStack {
                 // Light background inspired by app icon
-                Color("LightBackgroundColor")
-                    .ignoresSafeArea()
-
+                Color("LightBackgroundColor").ignoresSafeArea()
                 ScrollView {
                     VStack(spacing: 30) {
                         // Journal Text Section
@@ -44,7 +42,7 @@ struct JournalEntryView: View {
                         // Error Message Section
                         if let saveError = saveError {
                             Text(saveError)
-                                .foregroundColor(.red)
+                                .foregroundColor(Color("ErrorColor"))
                                 .font(.caption)
                                 .padding(.top)
                         }
@@ -63,20 +61,21 @@ struct JournalEntryView: View {
             Text("Journal Entry")
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(.black)
+                .foregroundColor(Color("PrimaryTextColor"))
 
             TextEditor(text: $journalText)
                 .frame(minHeight: 150)
                 .padding()
                 .background(
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.white)
+                        .fill(Color("SecondaryBackgroundColor")) // Matches your dark mode theme
                         .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(journalText.isEmpty ? Color.red : Color("AccentColor"), lineWidth: 2)
+                        .stroke(journalText.isEmpty ? Color("ErrorColor") : Color("AccentColor"), lineWidth: 2)
                 )
+                .scrollContentBackground(.hidden) // Hides default `TextEditor` background
         }
     }
 
@@ -85,15 +84,15 @@ struct JournalEntryView: View {
             Text("Date and Time")
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(.black)
-
+                .foregroundColor(Color("PrimaryTextColor"))
+            
             DatePicker("Select Date and Time", selection: $entryDate, displayedComponents: [.date, .hourAndMinute])
                 .labelsHidden()
                 .frame(maxWidth: .infinity)
                 .padding()
                 .background(
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.white)
+                        .fill(Color("SecondaryBackgroundColor")) // Matches your dark mode theme
                         .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                 )
                 .overlay(
@@ -108,18 +107,18 @@ struct JournalEntryView: View {
             Text("Tag a Goal")
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(.black)
-
+                .foregroundColor(Color("PrimaryTextColor"))
+            
             TextField("Add a goal tag (e.g., 'Fitness', 'Career')", text: $goalTag)
                 .padding()
                 .background(
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.white)
+                        .fill(Color("SecondaryBackgroundColor")) // Matches your dark mode theme
                         .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(goalTag.isEmpty ? Color.red : Color("AccentColor"), lineWidth: 2)
+                        .stroke(goalTag.isEmpty ? Color("ErrorColor") : Color("AccentColor"), lineWidth: 2)
                 )
         }
     }
@@ -129,18 +128,18 @@ struct JournalEntryView: View {
             Text("Related People or Location")
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(.black)
-
+                .foregroundColor(Color("PrimaryTextColor"))
+            
             TextField("Add names of people or location", text: $relatedPeopleOrLocation)
                 .padding()
                 .background(
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.white)
+                        .fill(Color("SecondaryBackgroundColor")) // Matches your dark mode theme
                         .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(relatedPeopleOrLocation.isEmpty ? Color.red : Color("AccentColor"), lineWidth: 2)
+                        .stroke(relatedPeopleOrLocation.isEmpty ? Color("ErrorColor") : Color("AccentColor"), lineWidth: 2)
                 )
         }
     }
