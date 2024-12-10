@@ -37,6 +37,8 @@ struct CalendarView: View {
                     if isLoading {
                         ProgressView("Loading...")
                             .padding()
+                    } else if journalEntries.isEmpty {
+                        emptyState
                     } else {
                         entriesList
                     }
@@ -49,6 +51,10 @@ struct CalendarView: View {
                         message: Text(alert.message),
                         dismissButton: .default(Text("OK"))
                     )
+                }
+                .onAppear {
+                    fetchDatesWithEntries()
+                    fetchEntriesForSelectedDate(date: selectedDate) // Automatically fetch entries for today
                 }
             }
         }
@@ -71,6 +77,16 @@ struct CalendarView: View {
             .onDelete(perform: deleteEntry) // Enable swipe-to-delete
         }
         .listStyle(PlainListStyle()) // Use plain style for a cleaner appearance
+    }
+
+    private var emptyState: some View {
+        VStack {
+            Spacer()
+            Text("No entries for this date.")
+                .font(.headline)
+                .foregroundColor(Color("SecondaryTextColor"))
+            Spacer()
+        }
     }
 
     // Fetch Dates with Entries
@@ -160,6 +176,7 @@ struct CalendarView: View {
         }
     }
 }
+
 
 #Preview {
     CalendarView()

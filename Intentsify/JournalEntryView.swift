@@ -46,19 +46,30 @@ struct JournalEntryView: View {
                 }
             }
 
-            // Check Mark Animation Overlay
+            // Checkmark Animation Overlay
             if showCheckmark {
-                VStack {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 80))
-                        .foregroundColor(Color("AccentColor"))
-                        .scaleEffect(1.2)
-                        .transition(.scale.combined(with: .opacity))
-                }
-                .background(
+                ZStack {
+                    // Background blur and dim effect
                     Color.black.opacity(0.4)
                         .ignoresSafeArea()
-                )
+                        .blur(radius: 5)
+
+                    // Checkmark animation
+                    VStack {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 100))
+                            .foregroundColor(Color("AccentColor"))
+                            .scaleEffect(showCheckmark ? 1 : 0.5)
+                            .opacity(showCheckmark ? 1 : 0)
+                            .animation(.spring(response: 0.5, dampingFraction: 0.6, blendDuration: 0.3), value: showCheckmark)
+
+                        Text("Entry Saved!")
+                            .font(.headline)
+                            .foregroundColor(Color("PrimaryTextColor"))
+                            .padding(.top, 8)
+                    }
+                }
+                .transition(.opacity)
                 .onAppear {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                         withAnimation {
