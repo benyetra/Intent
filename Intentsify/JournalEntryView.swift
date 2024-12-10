@@ -15,61 +15,74 @@ struct JournalEntryView: View {
     @State private var goalTag: String = ""
     @State private var relatedPeopleOrLocation: String = ""
     @State private var isSaving: Bool = false
-    @State private var saveError: String?
+    @State private var showAlert: Bool = false
+    @State private var alertMessage: String = ""
+    @State private var showCheckmark: Bool = false // To control the checkmark animation
 
     var body: some View {
-        NavigationView {
-            ZStack {
-                // Light background inspired by app icon
-                Color("LightBackgroundColor").ignoresSafeArea()
-                ScrollView {
-                    VStack(spacing: 30) {
-                        // Journal Text Section
+        ZStack {
+            NavigationView {
+                ZStack {
+                    Color("LightBackgroundColor").ignoresSafeArea()
+
+                    VStack(spacing: 16) {
                         journalSection
-
-                        // Date Picker Section
                         datePickerSection
-
-                        // Goal Tag Section
                         goalTagSection
-
-                        // Related People Section
                         relatedPeopleSection
-
-                        // Save Button Section
                         saveButton
-
-                        // Error Message Section
-                        if let saveError = saveError {
-                            Text(saveError)
-                                .foregroundColor(Color("ErrorColor"))
-                                .font(.caption)
-                                .padding(.top)
-                        }
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 30)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 20)
+                    .navigationTitle("Journal Entry")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .alert(isPresented: $showAlert) {
+                        Alert(
+                            title: Text("Error"),
+                            message: Text(alertMessage),
+                            dismissButton: .default(Text("OK"))
+                        )
+                    }
                 }
             }
-            .navigationTitle("Intentsify")
-            .navigationBarTitleDisplayMode(.inline)
+
+            // Check Mark Animation Overlay
+            if showCheckmark {
+                VStack {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 80))
+                        .foregroundColor(Color("AccentColor"))
+                        .scaleEffect(1.2)
+                        .transition(.scale.combined(with: .opacity))
+                }
+                .background(
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                )
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                        withAnimation {
+                            self.showCheckmark = false
+                        }
+                    }
+                }
+            }
         }
     }
 
     private var journalSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 8) {
             Text("Journal Entry")
-                .font(.title2)
-                .fontWeight(.bold)
+                .font(.headline)
                 .foregroundColor(Color("PrimaryTextColor"))
 
             TextEditor(text: $journalText)
-                .frame(minHeight: 150)
+                .frame(height: 80)
                 .padding()
                 .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color("SecondaryBackgroundColor")) // Matches your dark mode theme
-                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color("SecondaryBackgroundColor"))
+                        .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
@@ -80,66 +93,62 @@ struct JournalEntryView: View {
     }
 
     private var datePickerSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 8) {
             Text("Date and Time")
-                .font(.title2)
-                .fontWeight(.bold)
+                .font(.headline)
                 .foregroundColor(Color("PrimaryTextColor"))
-            
+
             DatePicker("Select Date and Time", selection: $entryDate, displayedComponents: [.date, .hourAndMinute])
                 .labelsHidden()
-                .frame(maxWidth: .infinity)
                 .padding()
                 .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color("SecondaryBackgroundColor")) // Matches your dark mode theme
-                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color("SecondaryBackgroundColor"))
+                        .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color("AccentColor"), lineWidth: 2)
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color("AccentColor"), lineWidth: 1)
                 )
         }
     }
 
     private var goalTagSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 8) {
             Text("Tag a Goal")
-                .font(.title2)
-                .fontWeight(.bold)
+                .font(.headline)
                 .foregroundColor(Color("PrimaryTextColor"))
-            
+
             TextField("Add a goal tag (e.g., 'Fitness', 'Career')", text: $goalTag)
                 .padding()
                 .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color("SecondaryBackgroundColor")) // Matches your dark mode theme
-                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color("SecondaryBackgroundColor"))
+                        .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(goalTag.isEmpty ? Color("ErrorColor") : Color("AccentColor"), lineWidth: 2)
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(goalTag.isEmpty ? Color("ErrorColor") : Color("AccentColor"), lineWidth: 1)
                 )
         }
     }
 
     private var relatedPeopleSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 8) {
             Text("Related People or Location")
-                .font(.title2)
-                .fontWeight(.bold)
+                .font(.headline)
                 .foregroundColor(Color("PrimaryTextColor"))
-            
+
             TextField("Add names of people or location", text: $relatedPeopleOrLocation)
                 .padding()
                 .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color("SecondaryBackgroundColor")) // Matches your dark mode theme
-                        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color("SecondaryBackgroundColor"))
+                        .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
                 )
                 .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(relatedPeopleOrLocation.isEmpty ? Color("ErrorColor") : Color("AccentColor"), lineWidth: 2)
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(relatedPeopleOrLocation.isEmpty ? Color("ErrorColor") : Color("AccentColor"), lineWidth: 1)
                 )
         }
     }
@@ -160,7 +169,7 @@ struct JournalEntryView: View {
             .frame(maxWidth: .infinity)
             .padding()
             .background(Color("AccentColor"))
-            .cornerRadius(10)
+            .cornerRadius(8)
         }
         .disabled(isSaving)
         .opacity(isSaving ? 0.6 : 1)
@@ -169,49 +178,56 @@ struct JournalEntryView: View {
     // Save Journal Entry to CloudKit
     private func saveJournalEntry() {
         guard !userRecordID.isEmpty else {
-            saveError = "User is not logged in."
+            showAlert(message: "User is not logged in.")
             return
         }
-
+        
         guard !journalText.trimmingCharacters(in: .whitespaces).isEmpty else {
-            saveError = "Please enter journal text."
+            showAlert(message: "Please enter journal text.")
             return
         }
-
+        
         guard !goalTag.trimmingCharacters(in: .whitespaces).isEmpty else {
-            saveError = "Please add a goal tag."
+            showAlert(message: "Please add a goal tag.")
             return
         }
-
+        
         guard !relatedPeopleOrLocation.trimmingCharacters(in: .whitespaces).isEmpty else {
-            saveError = "Please add related people or location."
+            showAlert(message: "Please add related people or location.")
             return
         }
-
+        
         isSaving = true
-        saveError = nil
-
+        
         let container = CKContainer(identifier: "iCloud.intentsify")
         let database = container.publicCloudDatabase
         let record = CKRecord(recordType: "JournalEntry")
-
+        
         let userReference = CKRecord.Reference(recordID: CKRecord.ID(recordName: userRecordID), action: .none)
         record["userID"] = userReference
         record["text"] = journalText
         record["entryDate"] = entryDate as NSDate
         record["goalTag"] = goalTag
         record["relatedPeopleOrLocation"] = relatedPeopleOrLocation
-
+        
         database.save(record) { _, error in
             DispatchQueue.main.async {
                 self.isSaving = false
                 if let error = error {
-                    self.saveError = "Failed to save: \(error.localizedDescription)"
+                    self.showAlert(message: "Failed to save: \(error.localizedDescription)")
                 } else {
                     self.clearForm()
+                    withAnimation {
+                        self.showCheckmark = true
+                    }
                 }
             }
         }
+    }
+
+    private func showAlert(message: String) {
+        alertMessage = message
+        showAlert = true
     }
 
     private func clearForm() {
@@ -225,3 +241,4 @@ struct JournalEntryView: View {
 #Preview {
     JournalEntryView()
 }
+
