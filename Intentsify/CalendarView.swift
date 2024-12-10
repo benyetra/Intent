@@ -58,6 +58,8 @@ struct CalendarView: View {
                 }
             }
         }
+        .navigationViewStyle(StackNavigationViewStyle())
+
     }
 
     private var entriesList: some View {

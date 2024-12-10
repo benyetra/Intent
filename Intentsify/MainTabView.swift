@@ -10,28 +10,41 @@ import SwiftUI
 struct MainTabView: View {
     var body: some View {
         TabView {
-            JournalEntryView()
-                .tabItem {
-                    Label("Journal", systemImage: "book")
-                }
+            NavigationView {
+                JournalEntryView()
+            }
+            .navigationViewStyle(StackNavigationViewStyle()) // Force single column
+            .tabItem {
+                Label("Journal", systemImage: "book")
+            }
 
-            CalendarView()
-                .tabItem {
-                    Label("Calendar", systemImage: "calendar")
-                }
+            NavigationView {
+                CalendarView()
+            }
+            .navigationViewStyle(StackNavigationViewStyle())
+            .tabItem {
+                Label("Calendar", systemImage: "calendar")
+            }
 
-            TrendsDashboardView()
-                .tabItem {
-                    Label("Trends", systemImage: "chart.bar.xaxis")
-                }
+            NavigationView {
+                TrendsDashboardView()
+            }
+            .navigationViewStyle(StackNavigationViewStyle())
+            .tabItem {
+                Label("Trends", systemImage: "chart.bar.xaxis")
+            }
 
-            AccountView()
-                .tabItem {
-                    Label("Account", systemImage: "person.crop.circle")
-                }
+            NavigationView {
+                AccountView()
+            }
+            .navigationViewStyle(StackNavigationViewStyle())
+            .tabItem {
+                Label("Account", systemImage: "person.crop.circle")
+            }
         }
     }
 }
+
 
 struct MainTabView_Previews: PreviewProvider {
     static var previews: some View {

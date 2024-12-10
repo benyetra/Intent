@@ -56,6 +56,7 @@ struct TrendsDashboardView: View {
                 Alert(title: Text("Error"), message: Text(alert.message), dismissButton: .default(Text("OK")))
             }
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 
     private func fetchTrendsData() {

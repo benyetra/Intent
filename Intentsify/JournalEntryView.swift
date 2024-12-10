@@ -45,6 +45,8 @@ struct JournalEntryView: View {
                     }
                 }
             }
+            .navigationViewStyle(StackNavigationViewStyle())
+
 
             // Checkmark Animation Overlay
             if showCheckmark {
