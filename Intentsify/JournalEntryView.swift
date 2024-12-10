@@ -50,7 +50,7 @@ struct JournalEntryView: View {
             if showCheckmark {
                 ZStack {
                     // Background blur and dim effect
-                    Color.black.opacity(0.4)
+                    Color.gray.opacity(0.4)
                         .ignoresSafeArea()
                         .blur(radius: 5)
 
@@ -109,20 +109,24 @@ struct JournalEntryView: View {
                 .font(.headline)
                 .foregroundColor(Color("PrimaryTextColor"))
 
-            DatePicker("Select Date and Time", selection: $entryDate, displayedComponents: [.date, .hourAndMinute])
-                .labelsHidden()
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color("SecondaryBackgroundColor"))
-                        .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color("AccentColor"), lineWidth: 1)
-                )
+            HStack {
+                DatePicker("", selection: $entryDate, displayedComponents: [.date, .hourAndMinute])
+                    .labelsHidden()
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color("SecondaryBackgroundColor"))
+                            .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color("AccentColor"), lineWidth: 1)
+                    )
+            }
         }
     }
+
 
     private var goalTagSection: some View {
         VStack(alignment: .leading, spacing: 8) {

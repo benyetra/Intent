@@ -62,16 +62,52 @@ struct CalendarView: View {
 
     private var entriesList: some View {
         List {
-            ForEach(journalEntries, id: \.recordID) { entry in
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(entry["text"] as? String ?? "No text")
-                        .font(.headline)
-                        .foregroundColor(Color("AccentColor"))
-                    Text(entry["goalTag"] as? String ?? "No goal tag")
-                        .font(.subheadline)
-                        .foregroundColor(Color("SecondaryTextColor"))
+            ForEach(journalEntries.sorted(by: { ($0["entryDate"] as? Date) ?? Date() < ($1["entryDate"] as? Date) ?? Date() }), id: \.recordID) { entry in
+                HStack(alignment: .top, spacing: 12) {
+                    // Entry Time
+                    if let entryDate = entry["entryDate"] as? Date {
+                        VStack {
+                            Text(entryDate.formatted(date: .omitted, time: .shortened))
+                                .font(.headline)
+                                .foregroundColor(Color("AccentColor"))
+                        }
+                        .frame(width: 65, alignment: .leading) // Slightly increased width
+                    }
+
+                    // Entry Details
+                    VStack(alignment: .leading, spacing: 4) {
+                        // Journal Text
+                        Text(entry["text"] as? String ?? "No text")
+                            .font(.headline)
+                            .foregroundColor(Color("AccentColor"))
+                            .lineLimit(2)
+                            .truncationMode(.tail)
+
+                        // Goal and Relationship
+                        HStack {
+                            if let goalTag = entry["goalTag"] as? String {
+                                Text("Goal:")
+                                    .font(.subheadline)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(Color("SecondaryTextColor")) +
+                                Text(" \(goalTag)")
+                                    .font(.subheadline)
+                                    .foregroundColor(Color("SecondaryTextColor"))
+                            }
+
+                            if let relationshipTag = entry["relatedPeopleOrLocation"] as? String {
+                                Text("Relationship:")
+                                    .font(.subheadline)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(Color("SecondaryTextColor")) +
+                                Text(" \(relationshipTag)")
+                                    .font(.subheadline)
+                                    .foregroundColor(Color("SecondaryTextColor"))
+                            }
+                        }
+                    }
                 }
-                .padding()
+                .padding(.vertical, 8)
                 .listRowBackground(Color("SecondaryBackgroundColor")) // Set background
             }
             .onDelete(perform: deleteEntry) // Enable swipe-to-delete
