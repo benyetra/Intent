@@ -100,7 +100,7 @@ struct CalendarView: View {
                                 }
                             }
 
-                            if let relationshipTag = entry["relatedPeopleOrLocation"] as? String {
+                            if let relationshipTag = entry["relatedPeople"] as? String {
                                 HStack {
                                     Text("Relationship:")
                                         .font(.subheadline)
