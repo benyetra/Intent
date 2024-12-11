@@ -14,6 +14,7 @@ struct JournalEntryView: View {
     @State private var entryDate: Date = Date()
     @State private var goalTag: String = ""
     @State private var relatedPeopleOrLocation: String = ""
+    @State private var goalAchieved: String = "" // Track thumbs-up or thumbs-down
     @State private var isSaving: Bool = false
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
@@ -26,10 +27,11 @@ struct JournalEntryView: View {
                     Color("LightBackgroundColor").ignoresSafeArea()
 
                     VStack(spacing: 16) {
-                        journalSection
                         datePickerSection
+                        journalSection
                         goalTagSection
                         relatedPeopleSection
+                        goalAchievedSection
                         saveButton
                     }
                     .padding(.horizontal, 16)
@@ -46,7 +48,6 @@ struct JournalEntryView: View {
                 }
             }
             .navigationViewStyle(StackNavigationViewStyle())
-
 
             // Checkmark Animation Overlay
             if showCheckmark {
@@ -85,7 +86,7 @@ struct JournalEntryView: View {
 
     private var journalSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Journal Entry")
+            Text("Event Description")
                 .font(.headline)
                 .foregroundColor(Color("PrimaryTextColor"))
 
@@ -128,7 +129,6 @@ struct JournalEntryView: View {
         .frame(maxWidth: .infinity, alignment: .leading) // Ensure the whole section is left-aligned
     }
 
-
     private var goalTagSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Tag a Goal")
@@ -169,6 +169,47 @@ struct JournalEntryView: View {
         }
     }
 
+    private var goalAchievedSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Did you progress this goal?")
+                .font(.headline)
+                .foregroundColor(Color("PrimaryTextColor"))
+
+            HStack(spacing: 16) {
+                Button(action: {
+                    goalAchieved = "true"
+                }) {
+                    HStack {
+                        Image(systemName: "hand.thumbsup.fill")
+                        Text("Yes")
+                    }
+                    .foregroundColor(goalAchieved == "true" ? .green : .gray)
+                    .padding(8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(goalAchieved == "true" ? Color.green.opacity(0.2) : Color.clear)
+                    )
+                }
+
+                Button(action: {
+                    goalAchieved = "false"
+                }) {
+                    HStack {
+                        Image(systemName: "hand.thumbsdown.fill")
+                        Text("No")
+                    }
+                    .foregroundColor(goalAchieved == "false" ? .red : .gray)
+                    .padding(8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(goalAchieved == "false" ? Color.red.opacity(0.2) : Color.clear)
+                    )
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading) // Aligns the HStack to the left
+        }
+    }
+
     private var saveButton: some View {
         Button(action: saveJournalEntry) {
             HStack {
@@ -191,41 +232,46 @@ struct JournalEntryView: View {
         .opacity(isSaving ? 0.6 : 1)
     }
 
-    // Save Journal Entry to CloudKit
     private func saveJournalEntry() {
         guard !userRecordID.isEmpty else {
             showAlert(message: "User is not logged in.")
             return
         }
-        
+
         guard !journalText.trimmingCharacters(in: .whitespaces).isEmpty else {
             showAlert(message: "Please enter journal text.")
             return
         }
-        
+
         guard !goalTag.trimmingCharacters(in: .whitespaces).isEmpty else {
             showAlert(message: "Please add a goal tag.")
             return
         }
-        
+
         guard !relatedPeopleOrLocation.trimmingCharacters(in: .whitespaces).isEmpty else {
             showAlert(message: "Please add related people or location.")
             return
         }
-        
+
+        guard goalAchieved != nil else {
+            showAlert(message: "Please indicate the impact on the goal's progression.")
+            return
+        }
+
         isSaving = true
-        
+
         let container = CKContainer(identifier: "iCloud.intentsify")
         let database = container.publicCloudDatabase
         let record = CKRecord(recordType: "JournalEntry")
-        
+
         let userReference = CKRecord.Reference(recordID: CKRecord.ID(recordName: userRecordID), action: .none)
         record["userID"] = userReference
         record["text"] = journalText
         record["entryDate"] = entryDate as NSDate
         record["goalTag"] = goalTag
         record["relatedPeopleOrLocation"] = relatedPeopleOrLocation
-        
+        record["goalAchieved"] = goalAchieved
+
         database.save(record) { _, error in
             DispatchQueue.main.async {
                 self.isSaving = false
@@ -251,10 +297,6 @@ struct JournalEntryView: View {
         entryDate = Date()
         goalTag = ""
         relatedPeopleOrLocation = ""
+        goalAchieved = ""
     }
 }
-
-#Preview {
-    JournalEntryView()
-}
-

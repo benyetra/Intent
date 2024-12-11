@@ -14,26 +14,29 @@ struct CalendarView: View {
     @State private var journalEntries: [CKRecord] = []
     @State private var datesWithEntries: [Date] = []
     @State private var isLoading = true
-    @State private var alertMessage: AlertMessage? // Add this property
+    @State private var alertMessage: AlertMessage?
 
     var body: some View {
         NavigationView {
             ZStack {
                 Color("LightBackgroundColor").ignoresSafeArea()
 
-                VStack {
+                VStack(spacing: 16) {
+                    // Calendar View
                     CustomCalendarView(
                         selectedDate: $selectedDate,
                         datesWithEntries: datesWithEntries,
                         onDateSelected: fetchEntriesForSelectedDate
                     )
-                    .padding()
+                    .padding([.horizontal, .top], 16) // Raise the calendar
+                    .padding(.bottom, 8)
                     .background(Color("SecondaryBackgroundColor"))
                     .cornerRadius(10)
                     .shadow(color: Color("AccentColor").opacity(0.2), radius: 5, x: 0, y: 2)
 
                     Divider()
 
+                    // List or Empty State
                     if isLoading {
                         ProgressView("Loading...")
                             .padding()
@@ -43,8 +46,7 @@ struct CalendarView: View {
                         entriesList
                     }
                 }
-                .padding()
-                .navigationTitle("Calendar")
+                .navigationTitle("Historical Events")
                 .alert(item: $alertMessage) { alert in
                     Alert(
                         title: Text("Error"),
@@ -54,12 +56,11 @@ struct CalendarView: View {
                 }
                 .onAppear {
                     fetchDatesWithEntries()
-                    fetchEntriesForSelectedDate(date: selectedDate) // Automatically fetch entries for today
+                    fetchEntriesForSelectedDate(date: selectedDate) // Fetch entries for today
                 }
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
-
     }
 
     private var entriesList: some View {
@@ -73,12 +74,12 @@ struct CalendarView: View {
                                 .font(.headline)
                                 .foregroundColor(Color("AccentColor"))
                         }
-                        .frame(width: 65, alignment: .leading) // Slightly increased width
+                        .frame(width: 65, alignment: .leading)
                     }
 
                     // Entry Details
                     VStack(alignment: .leading, spacing: 4) {
-                        // Journal Text
+                        // Main Text
                         Text(entry["text"] as? String ?? "No text")
                             .font(.headline)
                             .foregroundColor(Color("AccentColor"))
@@ -86,27 +87,47 @@ struct CalendarView: View {
                             .truncationMode(.tail)
 
                         // Goal and Relationship
-                        HStack {
+                        VStack(alignment: .leading, spacing: 2) {
                             if let goalTag = entry["goalTag"] as? String {
-                                Text("Goal:")
-                                    .font(.subheadline)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(Color("SecondaryTextColor")) +
-                                Text(" \(goalTag)")
-                                    .font(.subheadline)
-                                    .foregroundColor(Color("SecondaryTextColor"))
+                                HStack {
+                                    Text("Goal:")
+                                        .font(.subheadline)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(Color("SecondaryTextColor"))
+                                    Text(goalTag)
+                                        .font(.subheadline)
+                                        .foregroundColor(Color("SecondaryTextColor"))
+                                }
                             }
 
                             if let relationshipTag = entry["relatedPeopleOrLocation"] as? String {
-                                Text("Relationship:")
-                                    .font(.subheadline)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(Color("SecondaryTextColor")) +
-                                Text(" \(relationshipTag)")
-                                    .font(.subheadline)
-                                    .foregroundColor(Color("SecondaryTextColor"))
+                                HStack {
+                                    Text("Relationship:")
+                                        .font(.subheadline)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(Color("SecondaryTextColor"))
+                                    Text(relationshipTag)
+                                        .font(.subheadline)
+                                        .foregroundColor(Color("SecondaryTextColor"))
+                                }
                             }
                         }
+                    }
+
+                    Spacer() // Push the thumbs icon to the right
+
+                    // Thumbs-up or Thumbs-down icon
+                    if let goalAchieved = entry["goalAchieved"] as? String {
+                        Image(systemName: goalAchieved == "true" ? "hand.thumbsup.fill" : "hand.thumbsdown.fill")
+                            .font(.system(size: 18)) // Slightly larger for better visibility
+                            .foregroundColor(goalAchieved == "true" ? .green : .red)
+                            .padding(4)
+                            .background(
+                                Circle()
+                                    .fill(Color("SecondaryBackgroundColor"))
+                                    .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
+                            )
+                            .padding(.trailing, 8) // Add spacing from the row edge
                     }
                 }
                 .padding(.vertical, 8)
@@ -146,12 +167,10 @@ struct CalendarView: View {
                 } else if let records = results {
                     self.datesWithEntries = records.compactMap { record in
                         if let entryDate = record["entryDate"] as? Date {
-                            print("Fetched entryDate: \(entryDate)") // Debug: Check individual dates
                             return entryDate.startOfDay
                         }
                         return nil
                     }.removingDuplicates()
-                    print("Dates with entries: \(self.datesWithEntries)")
                 } else {
                     self.datesWithEntries = []
                 }
