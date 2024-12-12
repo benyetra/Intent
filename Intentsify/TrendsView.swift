@@ -14,18 +14,17 @@ struct TrendsDashboardView: View {
         NavigationView {
             ZStack {
                 Color("LightBackgroundColor").ignoresSafeArea()
-
+                
                 if isLoading {
                     ProgressView("Loading Trends...")
                 } else {
                     ScrollView {
                         VStack(spacing: 20) {
                             // Streak Progress
-                            StreakProgressView(
-                                streaks: goalStreaks,
-                                longestStreak: goalStreaks.values.max() ?? 1
+                            StreaksSectionView(
+                                goalStreaks: goalStreaks,
+                                maxDays: 30 // Assuming 30 is the max streak duration
                             )
-                            .cardStyle()
                             
                             // Trends Charts
                             TrendsChartSection(
@@ -47,7 +46,6 @@ struct TrendsDashboardView: View {
                     .safeAreaInset(edge: .bottom, spacing: 0) {
                         Color.clear.frame(height: 50) // Add space for the tab bar
                     }
-                    .navigationBarTitleDisplayMode(.inline)
                 }
             }
             .onAppear {
@@ -57,7 +55,6 @@ struct TrendsDashboardView: View {
                 Alert(title: Text("Error"), message: Text(alert.message), dismissButton: .default(Text("OK")))
             }
         }
-        .navigationViewStyle(StackNavigationViewStyle())
     }
 
     private func fetchTrendsData() {
@@ -95,23 +92,21 @@ struct TrendsDashboardView: View {
 
         for record in records {
             if let location = record["location"] as? CLLocation,
-               let goalName = record["goalTag"] as? String {
-                // Corrected logic to parse isSuccess
-                let isSuccess: Bool
-                if let goalStatus = record["goalAchieved"] as? String {
-                    isSuccess = goalStatus.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == "true"
-                } else {
-                    isSuccess = false
-                }
-                print("Goal: \(goalName), Success: \(isSuccess), Location: \(location.coordinate.latitude), \(location.coordinate.longitude)")
+               let goalName = record["goalTag"] as? String,
+               let goalStatus = record["goalAchieved"] as? String {
+                let isSuccess = goalStatus.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == "true"
+                
+                // Add all entries to the heat map
                 locations.append((coordinate: location.coordinate, goalName: goalName, isSuccess: isSuccess))
-            }
 
-            let goalTag = record["goalTag"] as? String ?? "None"
-            goalCounts[goalTag, default: 0] += 1
+                // Count only successes for trends and streaks
+                if isSuccess {
+                    goalCounts[goalName, default: 0] += 1
 
-            if let entryDate = (record["entryDate"] as? Date)?.startOfDay {
-                streakData[goalTag, default: []].append(entryDate)
+                    if let entryDate = (record["entryDate"] as? Date)?.startOfDay {
+                        streakData[goalName, default: []].append(entryDate)
+                    }
+                }
             }
         }
 
@@ -281,6 +276,75 @@ class CustomCircle: MKCircle {
     var isSuccess: Bool = false
 }
 
+struct StreaksSectionView: View {
+    var goalStreaks: [String: Int]
+    var maxDays: Int
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text("Your Goal Streaks")
+                .font(.headline)
+                .padding(.horizontal)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 20) { // Add sufficient spacing between rings
+                    ForEach(goalStreaks.sorted(by: { $0.value > $1.value }), id: \.key) { goal, streak in
+                        RingProgressView(goalName: goal, streak: streak, maxDays: maxDays)
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.vertical)
+            }
+        }
+        .padding(.vertical)
+        .background(Color("SecondaryBackgroundColor"))
+        .cornerRadius(10)
+        .shadow(color: Color("AccentColor").opacity(0.2), radius: 5, x: 0, y: 2)
+        .padding([.horizontal, .top])
+    }
+}
+
+
+struct RingProgressView: View {
+    var goalName: String
+    var streak: Int
+    var maxDays: Int
+
+    var body: some View {
+        VStack(spacing: 10) {
+            ZStack {
+                Circle()
+                    .stroke(lineWidth: 15)
+                    .opacity(0.2)
+                    .foregroundColor(Color.accentColor)
+
+                Circle()
+                    .trim(from: 0.0, to: CGFloat(min(Double(streak) / Double(maxDays), 1.0)))
+                    .stroke(
+                        style: StrokeStyle(lineWidth: 15, lineCap: .round, lineJoin: .round)
+                    )
+                    .foregroundColor(Color.accentColor)
+                    .rotationEffect(Angle(degrees: -90))
+                    .animation(.easeOut(duration: 1.0), value: streak)
+
+                Text("\(streak)")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(Color.accentColor)
+            }
+            .frame(width: 100, height: 100) // Increase ring size
+
+            Text(goalName)
+                .font(.caption)
+                .fontWeight(.bold)
+                .foregroundColor(.primary)
+        }
+        .frame(minWidth: 120) // Ensure enough space for each item
+    }
+}
+
+
+
 extension View {
     func cardStyle() -> some View {
         self
@@ -290,3 +354,4 @@ extension View {
             .padding([.horizontal, .top])
     }
 }
+

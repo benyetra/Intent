@@ -89,7 +89,6 @@ struct AccountView: View {
                 }
             }
         }
-        .navigationViewStyle(StackNavigationViewStyle())
     }
 
     // MARK: - Notification Permission Logic

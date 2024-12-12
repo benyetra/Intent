@@ -61,8 +61,6 @@ struct JournalEntryView: View {
                         saveButton
                     }
                     .padding()
-                    .navigationTitle("Journal Entry")
-                    .navigationBarTitleDisplayMode(.inline)
                     .alert(isPresented: $showAlert) {
                         Alert(
                             title: Text("Error"),
@@ -73,8 +71,6 @@ struct JournalEntryView: View {
                 }
                 .background(Color("LightBackgroundColor").ignoresSafeArea())
             }
-            .navigationViewStyle(StackNavigationViewStyle())
-            
             // Checkmark Animation Overlay
             if showCheckmark {
                 checkmarkOverlay

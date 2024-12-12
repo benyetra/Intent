@@ -8,61 +8,59 @@
 import SwiftUI
 
 struct MainTabView: View {
+    @State private var selectedTab: Int = 0
+
     init() {
-        // Configure the tab bar appearance
         let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground() // Ensure no transparency
-        appearance.backgroundColor = UIColor(named: "AccentColor") // Use AccentColor
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor(named: "AccentColor")
         appearance.stackedLayoutAppearance.selected.iconColor = UIColor(named: "ButtonTextColor")
         appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor(named: "ButtonTextColor")!]
         appearance.stackedLayoutAppearance.normal.iconColor = UIColor.white.withAlphaComponent(0.7)
         appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.white.withAlphaComponent(0.7)]
-        
+
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
     }
-    
+
     var body: some View {
-        TabView {
-            NavigationView {
+        NavigationView {
+            TabView(selection: $selectedTab) {
                 JournalEntryView()
-            }
-            .navigationViewStyle(StackNavigationViewStyle())
-            .tabItem {
-                Label("Journal", systemImage: "book")
-            }
+                    .tabItem {
+                        Label("Journal", systemImage: "book")
+                    }
+                    .tag(0)
 
-            NavigationView {
                 CalendarView()
-            }
-            .navigationViewStyle(StackNavigationViewStyle())
-            .tabItem {
-                Label("Calendar", systemImage: "calendar")
-            }
+                    .tabItem {
+                        Label("Calendar", systemImage: "calendar")
+                    }
+                    .tag(1)
 
-            NavigationView {
                 TrendsDashboardView()
-            }
-            .navigationViewStyle(StackNavigationViewStyle())
-            .tabItem {
-                Label("Trends", systemImage: "chart.bar.xaxis")
-            }
+                    .tabItem {
+                        Label("Trends", systemImage: "chart.bar")
+                    }
+                    .tag(2)
 
-            NavigationView {
                 AccountView()
+                    .tabItem {
+                        Label("Account", systemImage: "person")
+                    }
+                    .tag(3)
             }
-            .navigationViewStyle(StackNavigationViewStyle())
-            .tabItem {
-                Label("Account", systemImage: "person.crop.circle")
-            }
+            .navigationBarTitle(tabTitle(), displayMode: .inline)
         }
-        .background(Color("LightBackgroundColor")) // Ensure no transparent areas
-        .edgesIgnoringSafeArea(.top) // Prevents unwanted gaps at the top of the screen
     }
-}
 
-struct MainTabView_Previews: PreviewProvider {
-    static var previews: some View {
-        MainTabView()
+    private func tabTitle() -> String {
+        switch selectedTab {
+        case 0: return "Journal"
+        case 1: return "Calendar"
+        case 2: return "Trends"
+        case 3: return "Account"
+        default: return ""
+        }
     }
 }

@@ -46,7 +46,6 @@ struct CalendarView: View {
                         entriesList
                     }
                 }
-                .navigationTitle("Historical Events")
                 .alert(item: $alertMessage) { alert in
                     Alert(
                         title: Text("Error"),
@@ -60,7 +59,6 @@ struct CalendarView: View {
                 }
             }
         }
-        .navigationViewStyle(StackNavigationViewStyle())
     }
 
     private var entriesList: some View {
