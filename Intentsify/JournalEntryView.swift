@@ -120,6 +120,11 @@ struct JournalEntryView: View {
                         .fill(Color("SecondaryBackgroundColor"))
                         .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
                 )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(journalText.isEmpty ? Color("ErrorColor") : Color("AccentColor"), lineWidth: 2)
+                )
+                .scrollContentBackground(.hidden)
         }
     }
 
@@ -137,6 +142,10 @@ struct JournalEntryView: View {
                         .fill(Color("SecondaryBackgroundColor"))
                         .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
                 )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(goalTag.isEmpty ? Color("ErrorColor") : Color("AccentColor"), lineWidth: 2)
+                )
         }
     }
 
@@ -153,6 +162,10 @@ struct JournalEntryView: View {
                     RoundedRectangle(cornerRadius: 8)
                         .fill(Color("SecondaryBackgroundColor"))
                         .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(relatedPeople.isEmpty ? Color("ErrorColor") : Color("AccentColor"), lineWidth: 2)
                 )
         }
     }
@@ -173,6 +186,10 @@ struct JournalEntryView: View {
                     RoundedRectangle(cornerRadius: 8)
                         .fill(Color("SecondaryBackgroundColor"))
                         .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(locationQuery.isEmpty ? Color("ErrorColor") : Color("AccentColor"), lineWidth: 2)
                 )
                 
                 if !searchResults.isEmpty {
@@ -216,25 +233,34 @@ struct JournalEntryView: View {
             
             HStack(spacing: 16) {
                 Button(action: { goalAchieved = "true" }) {
-                    Label("Yes", systemImage: "hand.thumbsup.fill")
-                        .foregroundColor(goalAchieved == "true" ? .green : .gray)
-                        .padding(8)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(goalAchieved == "true" ? Color.green.opacity(0.2) : Color.clear)
-                        )
+                    HStack {
+                        Image(systemName: "hand.thumbsup.fill")
+                        Text("Yes")
+                    }
+                    .padding(8)
+                    .foregroundColor(goalAchieved == "true" ? .white : .primary)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(goalAchieved == "true" ? Color("AccentColor") : Color("SecondaryBackgroundColor"))
+                            .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
+                    )
                 }
                 
                 Button(action: { goalAchieved = "false" }) {
-                    Label("No", systemImage: "hand.thumbsdown.fill")
-                        .foregroundColor(goalAchieved == "false" ? .red : .gray)
-                        .padding(8)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(goalAchieved == "false" ? Color.red.opacity(0.2) : Color.clear)
-                        )
+                    HStack {
+                        Image(systemName: "hand.thumbsdown.fill")
+                        Text("No")
+                    }
+                    .padding(8)
+                    .foregroundColor(goalAchieved == "false" ? .white : .primary)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(goalAchieved == "false" ? Color("ErrorColor") : Color("SecondaryBackgroundColor"))
+                            .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
+                    )
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading) // Ensures alignment with other fields
         }
     }
 
@@ -262,8 +288,11 @@ struct JournalEntryView: View {
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 100))
                     .foregroundColor(Color("AccentColor"))
+                    .transition(.scale) // Smooth transition when it appears/disappears
+                    .animation(.easeInOut(duration: 0.5), value: showCheckmark)
                 Text("Entry Saved!")
                     .font(.headline)
+                    .transition(.opacity) // Fade out text smoothly
             }
         }
     }
@@ -276,11 +305,13 @@ struct JournalEntryView: View {
         searchCompleter.delegate = delegate
         locationSearchDelegate = delegate
     }
+    
+    //MARK: Show Alert
     private func showAlert(message: String) {
                 alertMessage = message
                 showAlert = true
             }
-    
+    //MARK: Resolve Location
     private func resolveLocation(from result: MKLocalSearchCompletion) {
         let searchRequest = MKLocalSearch.Request()
         searchRequest.naturalLanguageQuery = result.title + ", " + result.subtitle // Include subtitle for better precision
@@ -315,6 +346,7 @@ struct JournalEntryView: View {
         }
     }
     
+    //MARK: Save Journal Entry
     private func saveJournalEntry() {
         guard !userRecordID.isEmpty else {
             showAlert(message: "User is not logged in.")
@@ -359,22 +391,11 @@ struct JournalEntryView: View {
         record["goalTag"] = goalTag
         record["relatedPeople"] = relatedPeople
 
-        // Save only latitude and longitude
         let locationToSave = CLLocation(latitude: selectedLocation.coordinate.latitude,
                                          longitude: selectedLocation.coordinate.longitude)
-        record["location"] = locationToSave // Store location explicitly as CLLocation
+        record["location"] = locationToSave
 
         record["goalAchieved"] = goalAchieved
-
-        // Debugging logs
-        print("Saving record:")
-        print("UserID: \(userRecordID)")
-        print("Text: \(journalText)")
-        print("Date: \(entryDate)")
-        print("GoalTag: \(goalTag)")
-        print("RelatedPeople: \(relatedPeople)")
-        print("Location: \(locationToSave.coordinate.latitude), \(locationToSave.coordinate.longitude)")
-        print("GoalAchieved: \(goalAchieved)")
 
         database.save(record) { _, error in
             DispatchQueue.main.async {
@@ -388,10 +409,19 @@ struct JournalEntryView: View {
                     withAnimation {
                         self.showCheckmark = true
                     }
+                    
+                    // Dismiss the checkmark animation after 2 seconds
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        withAnimation {
+                            self.showCheckmark = false
+                        }
+                    }
                 }
             }
         }
     }
+
+    //MARK: Clear Form
     private func clearForm() {
         journalText = ""
         entryDate = Date()
