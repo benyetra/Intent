@@ -47,7 +47,6 @@ struct TrendsDashboardView: View {
                     .safeAreaInset(edge: .bottom, spacing: 0) {
                         Color.clear.frame(height: 50) // Add space for the tab bar
                     }
-//                    .navigationTitle("Trends")
                     .navigationBarTitleDisplayMode(.inline)
                 }
             }

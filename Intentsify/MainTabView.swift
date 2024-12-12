@@ -20,7 +20,6 @@ struct MainTabView: View {
         
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
-//        UITabBar.appearance().isTranslucent = false
     }
     
     var body: some View {
