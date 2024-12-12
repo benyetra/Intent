@@ -72,7 +72,6 @@ struct AccountView: View {
                     }
                 }
                 .padding()
-                .navigationTitle("Settings")
                 .onAppear {
                     checkNotificationPermission() // Prompt for notification permission
                     loadUserData()

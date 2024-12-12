@@ -26,7 +26,7 @@ struct TrendsDashboardView: View {
                                 longestStreak: goalStreaks.values.max() ?? 1
                             )
                             .cardStyle()
-
+                            
                             // Trends Charts
                             TrendsChartSection(
                                 title: "Goal Trends",
@@ -36,7 +36,7 @@ struct TrendsDashboardView: View {
                                 }
                             )
                             .cardStyle()
-
+                            
                             // Heat Map
                             HeatMapView(locations: journalLocations)
                                 .frame(height: 300)
@@ -44,7 +44,11 @@ struct TrendsDashboardView: View {
                         }
                         .padding()
                     }
-                    .navigationTitle("Trends")
+                    .safeAreaInset(edge: .bottom, spacing: 0) {
+                        Color.clear.frame(height: 50) // Add space for the tab bar
+                    }
+//                    .navigationTitle("Trends")
+                    .navigationBarTitleDisplayMode(.inline)
                 }
             }
             .onAppear {
@@ -284,5 +288,6 @@ extension View {
             .background(Color("SecondaryBackgroundColor"))
             .cornerRadius(10)
             .shadow(color: Color("AccentColor").opacity(0.2), radius: 5, x: 0, y: 2)
+            .padding([.horizontal, .top])
     }
 }

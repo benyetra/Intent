@@ -16,15 +16,24 @@ struct LoginView: View {
         ZStack {
             Color("LightBackgroundColor").ignoresSafeArea()
 
-            VStack(spacing: 40) {
-                Spacer()
+            VStack(spacing: 30) {
+                Spacer() // Push content towards the center
 
-                // Title and Subtitle
                 VStack(spacing: 10) {
-                    Text("Welcome to\nIntentsify 💪")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundColor(Color("AccentColor"))
+                    HStack(spacing: 8) {
+                        Text("Welcome to\nIntentsify")
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .foregroundColor(Color("AccentColor"))
+                            .multilineTextAlignment(.center)
+
+                        Image(systemName: "apple.meditate.circle.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 40, height: 40) // Adjust size as needed
+                            .foregroundColor(.yellow) // Fill the system image with yellow
+                    }
+                    .multilineTextAlignment(.center)
 
                     Text("Track your goals and build momentum towards positive change.")
                         .font(.subheadline)
@@ -33,7 +42,7 @@ struct LoginView: View {
                         .padding(.horizontal, 20)
                 }
 
-                Spacer()
+                Spacer() // Push title and subtitle to the center
 
                 // Sign In Button
                 SignInWithAppleButton(
