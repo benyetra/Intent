@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		0AB3ABFE2D0C6EC0007DDACA /* RadarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB3ABFD2D0C6EC0007DDACA /* RadarChartView.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		0ADA692C2CF5788A0042A136 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,6 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0AB3ABFD2D0C6EC0007DDACA /* RadarChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadarChartView.swift; sourceTree = "<group>"; };
 		0ADA69142CF578600042A136 /* Intentsify.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Intentsify.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0ADA692B2CF5788A0042A136 /* IntentsifyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IntentsifyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0ADA69352CF5788A0042A136 /* IntentsifyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IntentsifyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -88,6 +93,7 @@
 		0ADA690B2CF578600042A136 = {
 			isa = PBXGroup;
 			children = (
+				0AB3ABFD2D0C6EC0007DDACA /* RadarChartView.swift */,
 				0ADA69162CF578600042A136 /* Intentsify */,
 				0ADA692E2CF5788A0042A136 /* IntentsifyTests */,
 				0ADA69382CF5788A0042A136 /* IntentsifyUITests */,
@@ -252,6 +258,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0AB3ABFE2D0C6EC0007DDACA /* RadarChartView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

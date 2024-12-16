@@ -5,7 +5,8 @@ import CloudKit
 struct TrendsDashboardView: View {
     @AppStorage("userRecordID") private var userRecordID: String = ""
     @State private var goalStreaks: [String: Int] = [:]
-    @State private var goalTrends: [String: Int] = [:]
+    @State private var relatedPeopleSuccesses: [String: Int] = [:]
+    @State private var relatedPeopleFailures: [String: Int] = [:]
     @State private var journalLocations: [(coordinate: CLLocationCoordinate2D, goalName: String, isSuccess: Bool)] = []
     @State private var isLoading: Bool = true
     @State private var alertMessage: AlertMessage?
@@ -14,7 +15,7 @@ struct TrendsDashboardView: View {
         NavigationView {
             ZStack {
                 Color("LightBackgroundColor").ignoresSafeArea()
-                
+
                 if isLoading {
                     ProgressView("Loading Trends...")
                 } else {
@@ -23,28 +24,25 @@ struct TrendsDashboardView: View {
                             // Streak Progress
                             StreaksSectionView(
                                 goalStreaks: goalStreaks,
-                                maxDays: 30 // Assuming 30 is the max streak duration
+                                maxDays: 30
                             )
-                            
+
                             // Trends Charts
                             TrendsChartSection(
-                                title: "Goal Trends",
-                                data: goalTrends,
-                                onClick: { goal in
-                                    print("Tapped on goal: \(goal)")
+                                title: "Goal Trends with Relationships",
+                                relatedPeopleData: combineRelatedPeopleData(),
+                                onClick: { relationship in
+                                    print("Tapped on relationship: \(relationship)")
                                 }
                             )
                             .cardStyle()
-                            
+
                             // Heat Map
                             HeatMapView(locations: journalLocations)
                                 .frame(height: 300)
                                 .cardStyle()
                         }
                         .padding()
-                    }
-                    .safeAreaInset(edge: .bottom, spacing: 0) {
-                        Color.clear.frame(height: 50) // Add space for the tab bar
                     }
                 }
             }
@@ -77,7 +75,8 @@ struct TrendsDashboardView: View {
                     let records = matchResults.matchResults.compactMap { _, result in
                         try? result.get()
                     }
-                    self.processRecords(records)
+                    self.processRelatedPeople(records)
+                    self.processStreaksAndLocations(records) // Renamed for clarity
                 case .failure(let error):
                     self.alertMessage = AlertMessage(message: "Failed to fetch trends: \(error.localizedDescription)")
                 }
@@ -85,9 +84,41 @@ struct TrendsDashboardView: View {
         }
     }
 
-    private func processRecords(_ records: [CKRecord]) {
+    private func processRelatedPeople(_ records: [CKRecord]) {
+        var successes: [String: Int] = [:]
+        var failures: [String: Int] = [:]
+
+        for record in records {
+            if let name = record["relatedPeople"] as? String,
+               let goalAchieved = record["goalAchieved"] as? String {
+                let isSuccess = goalAchieved.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == "true"
+
+                if isSuccess {
+                    successes[name, default: 0] += 1
+                } else {
+                    failures[name, default: 0] += 1
+                }
+            }
+        }
+
+        self.relatedPeopleSuccesses = successes
+        self.relatedPeopleFailures = failures
+    }
+
+    private func combineRelatedPeopleData() -> [RelationshipData] {
+        var combinedData: [RelationshipData] = []
+
+        for name in Set(relatedPeopleSuccesses.keys).union(relatedPeopleFailures.keys) {
+            let successCount = relatedPeopleSuccesses[name, default: 0]
+            let failureCount = relatedPeopleFailures[name, default: 0]
+            combinedData.append(RelationshipData(name: name, successCount: successCount, failureCount: failureCount))
+        }
+
+        return combinedData
+    }
+
+    private func processStreaksAndLocations(_ records: [CKRecord]) {
         var locations: [(coordinate: CLLocationCoordinate2D, goalName: String, isSuccess: Bool)] = []
-        var goalCounts: [String: Int] = [:]
         var streakData: [String: [Date]] = [:]
 
         for record in records {
@@ -95,23 +126,18 @@ struct TrendsDashboardView: View {
                let goalName = record["goalTag"] as? String,
                let goalStatus = record["goalAchieved"] as? String {
                 let isSuccess = goalStatus.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == "true"
-                
+
                 // Add all entries to the heat map
                 locations.append((coordinate: location.coordinate, goalName: goalName, isSuccess: isSuccess))
 
-                // Count only successes for trends and streaks
-                if isSuccess {
-                    goalCounts[goalName, default: 0] += 1
-
-                    if let entryDate = (record["entryDate"] as? Date)?.startOfDay {
-                        streakData[goalName, default: []].append(entryDate)
-                    }
+                // Group streak data
+                if isSuccess, let entryDate = (record["entryDate"] as? Date)?.startOfDay {
+                    streakData[goalName, default: []].append(entryDate)
                 }
             }
         }
 
         self.journalLocations = locations
-        self.goalTrends = goalCounts
         self.goalStreaks = calculateStreaks(from: streakData)
     }
 
@@ -127,11 +153,17 @@ struct TrendsDashboardView: View {
                     streak = max(streak, 1)
                 }
             }
-            calculatedStreaks[goal] = streak
+            // Verify the streak ends within the last day (or threshold).
+            if let lastDate = sortedDates.last, Calendar.current.isDateInYesterday(lastDate) || Calendar.current.isDateInToday(lastDate) {
+                calculatedStreaks[goal] = streak
+            } else {
+                calculatedStreaks[goal] = 0 // Set streak to 0 for outdated goals
+            }
         }
         return calculatedStreaks
     }
 }
+
 
 struct StreakProgressView: View {
     var streaks: [String: Int]
@@ -279,21 +311,31 @@ class CustomCircle: MKCircle {
 struct StreaksSectionView: View {
     var goalStreaks: [String: Int]
     var maxDays: Int
-
+    
     var body: some View {
         VStack(alignment: .leading) {
             Text("Your Goal Streaks")
                 .font(.headline)
                 .padding(.horizontal)
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 20) { // Add sufficient spacing between rings
-                    ForEach(goalStreaks.sorted(by: { $0.value > $1.value }), id: \.key) { goal, streak in
-                        RingProgressView(goalName: goal, streak: streak, maxDays: maxDays)
-                    }
+            
+            if goalStreaks.filter({ $0.value > 0 }).isEmpty {
+                VStack {
+                    Text("No active streaks")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .padding(.vertical, 20)
                 }
-                .padding(.horizontal)
-                .padding(.vertical)
+                .frame(maxWidth: .infinity)
+            } else {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 20) {
+                        ForEach(goalStreaks.filter { $0.value > 0 }.sorted(by: { $0.value > $1.value }), id: \.key) { goal, streak in
+                            RingProgressView(goalName: goal, streak: streak, maxDays: maxDays)
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical)
+                }
             }
         }
         .padding(.vertical)
