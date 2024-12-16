@@ -14,13 +14,17 @@ struct JournalEntryView: View {
     @AppStorage("userRecordID") private var userRecordID: String = ""
     @StateObject private var locationManager = LocationManager()
     
+    // Journal State
     @State private var journalText: String = ""
     @State private var entryDate: Date = Date()
-    @State private var goalTag: String = ""
+    @State private var selectedGoal: String = ""
+    @State private var goals: [String] = [] // List of goals
     @State private var relatedPeople: String = ""
     @State private var locationQuery: String = ""
     @State private var selectedLocation: CLLocation? = nil
     @State private var goalAchieved: String = ""
+    @State private var isLoadingGoals = false
+
     @State private var isSaving: Bool = false
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
@@ -46,7 +50,7 @@ struct JournalEntryView: View {
                         journalSection
                         
                         // Goal Tag Section
-                        goalTagSection
+                        goalPickerSection
                         
                         // Related People Section
                         relationshipSection
@@ -78,6 +82,7 @@ struct JournalEntryView: View {
         }
         .onAppear {
             setupSearchCompleter()
+            fetchGoals()
             locationManager.requestLocationPermission()
         }
     }
@@ -124,24 +129,30 @@ struct JournalEntryView: View {
         }
     }
 
-    // MARK: - Goal Tag Section
-    private var goalTagSection: some View {
+    // MARK: - Goal Picker Section
+    private var goalPickerSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Tag a Goal")
+            Text("Select a Goal")
                 .font(.headline)
                 .foregroundColor(Color("PrimaryTextColor"))
             
-            TextField("Add a goal tag", text: $goalTag)
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color("SecondaryBackgroundColor"))
-                        .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(goalTag.isEmpty ? Color("ErrorColor") : Color("AccentColor"), lineWidth: 2)
-                )
+            ZStack(alignment: .leading) {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color("SecondaryBackgroundColor"))
+                    .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
+                    .frame(height: 44)
+                
+                Picker("Choose a Goal", selection: $selectedGoal) {
+                    Text("Choose a Goal").tag("") // Placeholder
+                        .foregroundColor(.gray)
+                    ForEach(goals, id: \.self) { goal in
+                        Text(goal).tag(goal)
+                    }
+                }
+                .pickerStyle(MenuPickerStyle())
+                .padding(.horizontal, 12)
+                .frame(height: 44) // Ensures it aligns with other text fields
+            }
         }
     }
 
@@ -342,6 +353,29 @@ struct JournalEntryView: View {
         }
     }
     
+    // MARK: - Fetch Goals from CloudKit
+    private func fetchGoals() {
+        guard !userRecordID.isEmpty else { return }
+
+        isLoadingGoals = true
+        let container = CKContainer(identifier: "iCloud.intentsify")
+        let database = container.publicCloudDatabase
+        let userRecordID = CKRecord.ID(recordName: self.userRecordID)
+        let userReference = CKRecord.Reference(recordID: userRecordID, action: .none)
+
+        let predicate = NSPredicate(format: "userID == %@", userReference)
+        let query = CKQuery(recordType: "JournalEntry", predicate: predicate)
+
+        database.perform(query, inZoneWith: nil) { results, error in
+            DispatchQueue.main.async {
+                isLoadingGoals = false
+                if let records = results {
+                    self.goals = Array(Set(records.compactMap { $0["goalTag"] as? String }))
+                }
+            }
+        }
+    }
+    
     //MARK: Save Journal Entry
     private func saveJournalEntry() {
         guard !userRecordID.isEmpty else {
@@ -354,8 +388,8 @@ struct JournalEntryView: View {
             return
         }
 
-        guard !goalTag.trimmingCharacters(in: .whitespaces).isEmpty else {
-            showAlert(message: "Please add a goal tag.")
+        guard !selectedGoal.isEmpty else {
+            showAlert(message: "Please select a goal.")
             return
         }
 
@@ -384,7 +418,7 @@ struct JournalEntryView: View {
         record["userID"] = userReference
         record["text"] = journalText
         record["entryDate"] = entryDate as NSDate
-        record["goalTag"] = goalTag
+        record["goalTag"] = selectedGoal
         record["relatedPeople"] = relatedPeople
 
         let locationToSave = CLLocation(latitude: selectedLocation.coordinate.latitude,
@@ -421,7 +455,7 @@ struct JournalEntryView: View {
     private func clearForm() {
         journalText = ""
         entryDate = Date()
-        goalTag = ""
+        selectedGoal = ""
         relatedPeople = ""
         selectedLocation = nil
         locationQuery = ""
