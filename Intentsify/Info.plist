@@ -14,5 +14,7 @@
     <string>We need your location to provide location-based suggestions.</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
     <string>We need your location for enhanced app functionality.</string>
+    <key>UILaunchStoryboardName</key>
+    <string>LaunchScreen</string>
 </dict>
 </plist>

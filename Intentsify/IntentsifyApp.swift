@@ -10,15 +10,29 @@ import SwiftUI
 @main
 struct IntentsifyApp: App {
     @AppStorage("isLoggedIn") private var isLoggedIn = false
+    @State private var showSplash = true // State to manage splash screen visibility
 
     var body: some Scene {
         WindowGroup {
-            if isLoggedIn {
-                MainTabView()
+            if showSplash {
+                // Show the splash screen first
+                SplashScreenView()
+                    .onAppear {
+                        // Simulate splash duration
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                            withAnimation {
+                                showSplash = false
+                            }
+                        }
+                    }
             } else {
-                LoginView()
+                // Check login state
+                if isLoggedIn {
+                    MainTabView()
+                } else {
+                    LoginView()
+                }
             }
         }
     }
 }
-
