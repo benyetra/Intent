@@ -46,6 +46,7 @@ struct CalendarView: View {
                         entriesList
                     }
                 }
+                .animation(.easeInOut, value: isLoading) // Smooth transition
                 .alert(item: $alertMessage) { alert in
                     Alert(
                         title: Text("Error"),
@@ -69,7 +70,7 @@ struct CalendarView: View {
                     if let entryDate = entry["entryDate"] as? Date {
                         VStack {
                             Text(entryDate.formatted(date: .omitted, time: .shortened))
-                                .font(.headline)
+                                .font(.caption)
                                 .foregroundColor(Color("AccentTextColor"))
                         }
                         .frame(width: 65, alignment: .leading)
