@@ -11,6 +11,7 @@ struct TrendsChartSection: View {
             Text(title)
                 .font(.headline)
                 .padding(.horizontal)
+                .foregroundColor(Color("PrimaryTextColor"))
 
             if relatedPeopleData.isEmpty {
                 Text("No data available.")

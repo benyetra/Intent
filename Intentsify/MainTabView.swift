@@ -1,26 +1,36 @@
-//
-//  MainTabView.swift
-//  Intentsify
-//
-//  Created by Bennett Yetra on 12/9/24.
-//
-
 import SwiftUI
 
 struct MainTabView: View {
     @State private var selectedTab: Int = 0
 
     init() {
-        let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor(named: "AccentColor")
-        appearance.stackedLayoutAppearance.selected.iconColor = UIColor(named: "ButtonTextColor")
-        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor(named: "ButtonTextColor")!]
-        appearance.stackedLayoutAppearance.normal.iconColor = UIColor.white.withAlphaComponent(0.7)
-        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.white.withAlphaComponent(0.7)]
+        // Configure the UITabBar appearance
+        let tabAppearance = UITabBarAppearance()
+        tabAppearance.configureWithOpaqueBackground()
+        tabAppearance.backgroundColor = UIColor(named: "AccentColor")
+        tabAppearance.stackedLayoutAppearance.selected.iconColor = UIColor(named: "ButtonTextColor")
+        tabAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor(named: "ButtonTextColor")!]
+        tabAppearance.stackedLayoutAppearance.normal.iconColor = UIColor.white.withAlphaComponent(0.7)
+        tabAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.white.withAlphaComponent(0.7)]
 
-        UITabBar.appearance().standardAppearance = appearance
-        UITabBar.appearance().scrollEdgeAppearance = appearance
+        UITabBar.appearance().standardAppearance = tabAppearance
+        UITabBar.appearance().scrollEdgeAppearance = tabAppearance
+
+        // Configure the UINavigationBar appearance
+        let navAppearance = UINavigationBarAppearance()
+        navAppearance.configureWithOpaqueBackground()
+        navAppearance.backgroundColor = UIColor(named: "AccentColor")
+        navAppearance.titleTextAttributes = [
+            .foregroundColor: UIColor(named: "PrimaryTextColor")!,
+            .font: UIFont.systemFont(ofSize: 18, weight: .semibold) // Optional: Adjust font
+        ]
+        navAppearance.largeTitleTextAttributes = [
+            .foregroundColor: UIColor(named: "PrimaryTextColor")!,
+            .font: UIFont.systemFont(ofSize: 34, weight: .bold) // Optional: Adjust large font
+        ]
+
+        UINavigationBar.appearance().standardAppearance = navAppearance
+        UINavigationBar.appearance().scrollEdgeAppearance = navAppearance
     }
 
     var body: some View {
@@ -50,7 +60,8 @@ struct MainTabView: View {
                     }
                     .tag(3)
             }
-            .navigationBarTitle(tabTitle(), displayMode: .inline)
+            .navigationTitle(tabTitle())
+            .navigationBarTitleDisplayMode(.inline) // Inline title
         }
     }
 

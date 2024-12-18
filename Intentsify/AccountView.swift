@@ -129,6 +129,7 @@ struct AccountView: View {
             
             HStack(spacing: 8) {
                 TextField("Enter new goal", text: $newGoal)
+                    .foregroundColor(Color("PrimaryTextColor"))
                     .padding(.horizontal)
                     .frame(height: 44)
                     .background(
@@ -139,7 +140,7 @@ struct AccountView: View {
                 Button(action: addGoal) {
                     Image(systemName: "plus.circle.fill")
                         .font(.title2)
-                        .foregroundColor(.blue)
+                        .foregroundColor(Color("ButtonBackgroundColor"))
                         .frame(width: 44, height: 44) // Fixed size for button
                         .background(
                             RoundedRectangle(cornerRadius: 8)
@@ -161,6 +162,8 @@ struct AccountView: View {
             
             DatePicker("Select Reminder Time", selection: $reminderTime, displayedComponents: .hourAndMinute)
                 .labelsHidden()
+                .tint(Color("PrimaryTextColor")) // Updates interactive components
+                .colorMultiply(Color("PrimaryTextColor")) // Affects static DatePicker text
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(
@@ -183,7 +186,7 @@ struct AccountView: View {
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity) // Set the button width to the container
                 .frame(height: 50)          // Set the button height
-                .background(Color.red)
+                .background(Color("ErrorColor"))
                 .cornerRadius(12)
         }
     }

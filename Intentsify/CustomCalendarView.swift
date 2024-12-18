@@ -25,6 +25,7 @@ struct CustomCalendarView: View {
                 Spacer()
                 Text(selectedDate.monthAndYear)
                     .font(.headline)
+                    .foregroundColor(Color("PrimaryTextColor"))
                 Spacer()
                 Button(action: { changeMonth(by: 1) }) {
                     Image(systemName: "chevron.right")
@@ -36,6 +37,7 @@ struct CustomCalendarView: View {
             LazyVGrid(columns: columns, spacing: 10) {
                 ForEach(calendar.shortWeekdaySymbols, id: \.self) { day in
                     Text(day)
+                        .foregroundColor(Color("PrimaryTextColor"))
                         .font(.subheadline)
                         .fontWeight(.bold)
                 }
@@ -51,7 +53,7 @@ struct CustomCalendarView: View {
                         VStack {
                             Text("\(calendar.component(.day, from: date))")
                                 .font(.body)
-                                .foregroundColor(isSameDay(date, selectedDate) ? .white : .primary)
+                                .foregroundColor(isSameDay(date, selectedDate) ? Color("PrimaryTextColor") : Color("PrimaryTextColor"))
                                 .frame(width: 30, height: 30)
                                 .background(isSameDay(date, selectedDate) ? Color.accentColor : Color.clear)
                                 .clipShape(Circle())

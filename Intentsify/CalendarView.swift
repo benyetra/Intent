@@ -70,7 +70,7 @@ struct CalendarView: View {
                         VStack {
                             Text(entryDate.formatted(date: .omitted, time: .shortened))
                                 .font(.headline)
-                                .foregroundColor(Color("AccentColor"))
+                                .foregroundColor(Color("AccentTextColor"))
                         }
                         .frame(width: 65, alignment: .leading)
                     }
@@ -80,7 +80,7 @@ struct CalendarView: View {
                         // Main Text
                         Text(entry["text"] as? String ?? "No text")
                             .font(.headline)
-                            .foregroundColor(Color("AccentColor"))
+                            .foregroundColor(Color("AccentTextColor"))
                             .lineLimit(2)
                             .truncationMode(.tail)
 
@@ -91,10 +91,10 @@ struct CalendarView: View {
                                     Text("Goal:")
                                         .font(.subheadline)
                                         .fontWeight(.bold)
-                                        .foregroundColor(Color("SecondaryTextColor"))
+                                        .foregroundColor(Color("PrimaryTextColor"))
                                     Text(goalTag)
                                         .font(.subheadline)
-                                        .foregroundColor(Color("SecondaryTextColor"))
+                                        .foregroundColor(Color("PrimaryTextColor"))
                                 }
                             }
 
@@ -103,10 +103,10 @@ struct CalendarView: View {
                                     Text("Relationship:")
                                         .font(.subheadline)
                                         .fontWeight(.bold)
-                                        .foregroundColor(Color("SecondaryTextColor"))
+                                        .foregroundColor(Color("PrimaryTextColor"))
                                     Text(relationshipTag)
                                         .font(.subheadline)
-                                        .foregroundColor(Color("SecondaryTextColor"))
+                                        .foregroundColor(Color("PrimaryTextColor"))
                                 }
                             }
                         }

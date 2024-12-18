@@ -317,6 +317,7 @@ struct StreaksSectionView: View {
             Text("Your Goal Streaks")
                 .font(.headline)
                 .padding(.horizontal)
+                .foregroundColor(Color("PrimaryTextColor"))
             
             if goalStreaks.filter({ $0.value > 0 }).isEmpty {
                 VStack {
@@ -379,7 +380,7 @@ struct RingProgressView: View {
             Text(goalName)
                 .font(.caption)
                 .fontWeight(.bold)
-                .foregroundColor(.primary)
+                .foregroundColor(Color("PrimaryTextColor"))
         }
         .frame(minWidth: 120) // Ensure enough space for each item
     }

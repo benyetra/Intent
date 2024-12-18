@@ -94,17 +94,24 @@ struct JournalEntryView: View {
                 .font(.headline)
                 .foregroundColor(Color("PrimaryTextColor"))
             
-            DatePicker("Select Date and Time", selection: $entryDate, displayedComponents: [.date, .hourAndMinute])
-                .labelsHidden()
-                .padding()
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color("SecondaryBackgroundColor"))
-                        .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
-                )
+            DatePicker(
+                "Select Date and Time",
+                selection: $entryDate,
+                displayedComponents: [.date, .hourAndMinute]
+            )
+            .labelsHidden()
+            .tint(Color("PrimaryTextColor")) // Updates interactive components
+            .colorMultiply(Color("PrimaryTextColor")) // Affects static DatePicker text
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color("SecondaryBackgroundColor"))
+                    .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
+            )
         }
     }
+
 
     // MARK: - Journal Section
     private var journalSection: some View {
@@ -142,19 +149,26 @@ struct JournalEntryView: View {
                     .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
                     .frame(height: 44)
                 
-                Picker("Choose a Goal", selection: $selectedGoal) {
-                    Text("Choose a Goal").tag("") // Placeholder
-                        .foregroundColor(.gray)
+                // Picker with custom label color
+                Picker("", selection: $selectedGoal) {
+                    Text("Choose a Goal") // Placeholder
+                        .foregroundColor(Color("PrimaryTextColor").opacity(0.5))
+                        .tag("")
+                    
                     ForEach(goals, id: \.self) { goal in
-                        Text(goal).tag(goal)
+                        Text(goal)
+                            .foregroundColor(Color("PrimaryTextColor")) // Apply text color to items
+                            .tag(goal)
                     }
                 }
                 .pickerStyle(MenuPickerStyle())
+                .tint(Color("PrimaryTextColor")) // Ensure menu tint matches PrimaryTextColor
                 .padding(.horizontal, 12)
-                .frame(height: 44) // Ensures it aligns with other text fields
+                .frame(height: 44)
             }
         }
     }
+
 
     // MARK: - Related People Section
     private var relationshipSection: some View {
@@ -242,10 +256,12 @@ struct JournalEntryView: View {
                 Button(action: { goalAchieved = "true" }) {
                     HStack {
                         Image(systemName: "hand.thumbsup.fill")
+                            .foregroundColor(Color("PrimaryTextColor"))
                         Text("Yes")
+                            .foregroundColor(Color("PrimaryTextColor"))
                     }
                     .padding(8)
-                    .foregroundColor(goalAchieved == "true" ? .white : .primary)
+                    .foregroundColor(goalAchieved == "true" ? Color("PrimaryTextColor") : .primary)
                     .background(
                         RoundedRectangle(cornerRadius: 8)
                             .fill(goalAchieved == "true" ? Color("AccentColor") : Color("SecondaryBackgroundColor"))
@@ -256,10 +272,12 @@ struct JournalEntryView: View {
                 Button(action: { goalAchieved = "false" }) {
                     HStack {
                         Image(systemName: "hand.thumbsdown.fill")
+                            .foregroundColor(Color("PrimaryTextColor"))
                         Text("No")
+                            .foregroundColor(Color("PrimaryTextColor"))
                     }
                     .padding(8)
-                    .foregroundColor(goalAchieved == "false" ? .white : .primary)
+                    .foregroundColor(goalAchieved == "false" ? .white  : .primary)
                     .background(
                         RoundedRectangle(cornerRadius: 8)
                             .fill(goalAchieved == "false" ? Color("ErrorColor") : Color("SecondaryBackgroundColor"))
@@ -277,13 +295,13 @@ struct JournalEntryView: View {
             if isSaving {
                 ProgressView().tint(.white)
             } else {
-                Text("Submit Entry")
-                    .foregroundColor(.white)
+                Text("Save Journal")
+                    .foregroundColor(Color("SecondaryTextColor"))
             }
         }
         .frame(maxWidth: .infinity)
         .padding()
-        .background(Color("AccentColor"))
+        .background(Color("ButtonBackgroundColor"))
         .cornerRadius(8)
     }
 
