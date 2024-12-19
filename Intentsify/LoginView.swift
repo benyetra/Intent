@@ -24,20 +24,20 @@ struct LoginView: View {
                         Text("Welcome to\nIntentsify")
                             .font(.largeTitle)
                             .fontWeight(.bold)
-                            .foregroundColor(Color("AccentColor"))
+                            .foregroundColor(Color("ReverseAccentColor"))
                             .multilineTextAlignment(.center)
 
                         Image(systemName: "apple.meditate.circle.fill")
                             .resizable()
                             .scaledToFit()
                             .frame(width: 40, height: 40) // Adjust size as needed
-                            .foregroundColor(.yellow) // Fill the system image with yellow
+                            .foregroundColor(Color("ReverseAccentColor")) // Fill the system image with yellow
                     }
                     .multilineTextAlignment(.center)
 
                     Text("Track your goals and build momentum towards positive change.")
                         .font(.subheadline)
-                        .foregroundColor(Color("SecondaryTextColor"))
+                        .foregroundColor(Color("ReverseAccentColor"))
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 20)
                 }
@@ -63,14 +63,14 @@ struct LoginView: View {
                 // Security Text
                 Text("Sign in securely with your Apple ID")
                     .font(.footnote)
-                    .foregroundColor(Color("SecondaryTextColor"))
+                    .foregroundColor(Color("ReverseAccentColor"))
 
                 Spacer()
 
                 // Footer
                 Text("Powered by YetiApps")
                     .font(.footnote)
-                    .foregroundColor(Color("SecondaryTextColor"))
+                    .foregroundColor(Color("ReverseAccentColor"))
             }
             .padding()
         }

@@ -71,7 +71,7 @@ struct CalendarView: View {
                         VStack {
                             Text(entryDate.formatted(date: .omitted, time: .shortened))
                                 .font(.caption)
-                                .foregroundColor(Color("AccentTextColor"))
+                                .foregroundColor(Color("TitleColor"))
                         }
                         .frame(width: 65, alignment: .leading)
                     }
@@ -81,7 +81,7 @@ struct CalendarView: View {
                         // Main Text
                         Text(entry["text"] as? String ?? "No text")
                             .font(.headline)
-                            .foregroundColor(Color("AccentTextColor"))
+                            .foregroundColor(Color("TitleColor"))
                             .lineLimit(2)
                             .truncationMode(.tail)
 

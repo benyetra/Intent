@@ -21,6 +21,7 @@ struct CustomCalendarView: View {
             HStack {
                 Button(action: { changeMonth(by: -1) }) {
                     Image(systemName: "chevron.left")
+                        .foregroundColor(Color("PrimaryTextColor"))
                 }
                 Spacer()
                 Text(selectedDate.monthAndYear)
@@ -29,6 +30,7 @@ struct CustomCalendarView: View {
                 Spacer()
                 Button(action: { changeMonth(by: 1) }) {
                     Image(systemName: "chevron.right")
+                        .foregroundColor(Color("PrimaryTextColor"))
                 }
             }
             .padding(.horizontal)

@@ -224,6 +224,7 @@ struct JournalEntryView: View {
                                         VStack(alignment: .leading) {
                                             Text(result.title)
                                                 .font(.subheadline)
+                                                .foregroundColor(Color("ReverseAccentColor"))
                                             Text(result.subtitle)
                                                 .font(.footnote)
                                                 .foregroundColor(.secondary)
@@ -256,15 +257,15 @@ struct JournalEntryView: View {
                 Button(action: { goalAchieved = "true" }) {
                     HStack {
                         Image(systemName: "hand.thumbsup.fill")
-                            .foregroundColor(Color("PrimaryTextColor"))
+                            .foregroundColor(Color("ThumbColorText"))
                         Text("Yes")
-                            .foregroundColor(Color("PrimaryTextColor"))
+                            .foregroundColor(Color("ThumbColorText"))
                     }
                     .padding(8)
                     .foregroundColor(goalAchieved == "true" ? Color("PrimaryTextColor") : .primary)
                     .background(
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(goalAchieved == "true" ? Color("AccentColor") : Color("SecondaryBackgroundColor"))
+                            .fill(goalAchieved == "true" ? Color("AccentTextColor") : Color("SecondaryBackgroundColor"))
                             .shadow(color: Color.black.opacity(0.1), radius: 2, x: 0, y: 1)
                     )
                 }
@@ -272,9 +273,9 @@ struct JournalEntryView: View {
                 Button(action: { goalAchieved = "false" }) {
                     HStack {
                         Image(systemName: "hand.thumbsdown.fill")
-                            .foregroundColor(Color("PrimaryTextColor"))
+                            .foregroundColor(Color("ThumbColorText"))
                         Text("No")
-                            .foregroundColor(Color("PrimaryTextColor"))
+                            .foregroundColor(Color("ThumbColorText"))
                     }
                     .padding(8)
                     .foregroundColor(goalAchieved == "false" ? .white  : .primary)
@@ -296,19 +297,19 @@ struct JournalEntryView: View {
                 ProgressView().tint(.white)
             } else {
                 Text("Save Journal")
-                    .foregroundColor(Color("SecondaryTextColor"))
+                    .foregroundColor(Color("ReverseAccentColor"))
             }
         }
         .frame(maxWidth: .infinity)
         .padding()
-        .background(Color("ButtonBackgroundColor"))
+        .background(Color("AccentColor"))
         .cornerRadius(8)
     }
 
     // MARK: - Checkmark Overlay
     private var checkmarkOverlay: some View {
         ZStack {
-            Color.gray.opacity(0.4).ignoresSafeArea()
+            Color("SplashColor").opacity(0.4).ignoresSafeArea()
             VStack {
                 Image(systemName: "checkmark.circle.fill")
                     .font(.system(size: 100))
@@ -402,27 +403,27 @@ struct JournalEntryView: View {
         }
 
         guard !journalText.trimmingCharacters(in: .whitespaces).isEmpty else {
-            showAlert(message: "Please enter journal text.")
+            showAlert(message: "It looks like you forgot to enter your description!")
             return
         }
 
         guard !selectedGoal.isEmpty else {
-            showAlert(message: "Please select a goal.")
+            showAlert(message: "Don't forget to select a goal.")
             return
         }
 
         guard !relatedPeople.trimmingCharacters(in: .whitespaces).isEmpty else {
-            showAlert(message: "Please add related people.")
+            showAlert(message: "Please add the people related to this goal.")
             return
         }
 
         guard let selectedLocation = selectedLocation else {
-            showAlert(message: "Please select a location.")
+            showAlert(message: "Enter a location where this event happened.")
             return
         }
 
         guard !goalAchieved.isEmpty else {
-            showAlert(message: "Please indicate whether the goal was achieved.")
+            showAlert(message: "Please add if you progressed your goal or not.")
             return
         }
 
